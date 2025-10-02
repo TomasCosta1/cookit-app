@@ -1,4 +1,5 @@
 import React from "react";
+import "./IngredientsCard.css";
 
 export const IngredientsCard = (props = {}) => {
   const { id, name, selected, removeMyIngredient, setRows, addMyIngredient } = props;
