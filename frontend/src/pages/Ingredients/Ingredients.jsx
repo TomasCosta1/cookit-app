@@ -4,9 +4,9 @@ import {
   addMyIngredient,
   isInMyIngredients,
   removeMyIngredient,
-} from "../lib/storage.js";
-import "../styles/Ingredients.css";
-import { IngredientsCard } from "../components/IngredientsCard.jsx";
+} from "../../lib/storage.js";
+import "./Ingredients.css";
+import { IngredientsCard } from "../../components/IngredientsCard/IngredientsCard.jsx";
 
 const API_BASE = "http://localhost:3000";
 

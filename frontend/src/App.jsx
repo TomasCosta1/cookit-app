@@ -1,8 +1,8 @@
 import './App.css'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
-import Ingredients from './pages/Ingredients.jsx'
-import MyIngredients from './pages/MyIngredients.jsx'
-import { Header } from './components/Header.jsx'
+import Ingredients from './pages/Ingredients/Ingredients.jsx'
+import MyIngredients from './pages/MyIngredients/MyIngredients.jsx'
+import { Header } from './components/Header/Header.jsx'
 
 function App() {
   return (

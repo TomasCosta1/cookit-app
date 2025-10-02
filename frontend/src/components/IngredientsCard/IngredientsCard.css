@@ -1,0 +1,12 @@
+.ingredients-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  max-width: 100%;
+  margin-block: 10px;
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { getMyIngredients, removeMyIngredient } from '../lib/storage.js'
-import '../styles/MyIngredients.css'
+import { getMyIngredients, removeMyIngredient } from '../../lib/storage.js'
+import './MyIngredients.css'
 
 export default function MyIngredients() {
   const [rows, setRows] = useState([])
