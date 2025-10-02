@@ -1,0 +1,48 @@
+.ingredients-page {
+  display: grid;
+  gap: 1rem;
+  padding: 0 16px;
+}
+
+.ingredients-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.ingredients-input {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.ingredients-pager button.btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ingredients-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ingredients-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  max-width: 100%;
+  margin-block: 10px;
+}
+
+.ingredients-meta {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
