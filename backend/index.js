@@ -4,6 +4,7 @@ const passport = require("passport");
 const cors = require("cors");
 require("dotenv").config();
 require("./src/config/passport");
+const { testConnection } = require('./config/database');
 
 const app = express();
 
@@ -39,4 +40,18 @@ app.use("/api/auth", authRoutes);
 
 app.listen(process.env.PORT || 3000, () => {
   console.log("Backend corriendo en http://localhost:3000");
+});
+// CORS (permitir frontend local en 5173)
+app.use(cors());
+
+app.get('/', (req, res) => {
+    res.send('Cookit API is running');
+});
+
+app.use('/ingredients', require('./routes/ingredients'));
+
+testConnection();
+
+app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
 });

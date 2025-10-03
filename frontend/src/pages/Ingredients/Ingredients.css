@@ -1,0 +1,35 @@
+.ingredients-page {
+  display: grid;
+  gap: 1rem;
+  padding: 0 16px;
+}
+
+.ingredients-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.ingredients-input {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.ingredients-pager button.btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ingredients-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ingredients-meta {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+

@@ -1,6 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+html, body {
+  background: #ffffff;
+  color: #1f2937;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .05s ease, filter .2s ease, opacity .2s ease;
+  text-decoration: none;
+}
+.btn:hover { filter: brightness(0.98); }
+.btn:active { transform: translateY(1px); }
+
+.btn-primary {
+  background: #fcba03;
+  color: #1a1a1a;
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.card {
+  background: #f7f7f7;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+input,
+select,
+textarea {
+  width: auto;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 8px 10px;
+  outline: none;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+input:hover,
+select:hover,
+textarea:hover {
+  border-color: #fcba03;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #fcba03;
+  box-shadow: 0 0 0 3px rgba(252, 186, 3, 0.25);
+}
+* {
+  box-sizing: border-box;
+  font-family: "Nunito", sans-serif;
+}
+
+html, body, #root {
+  width: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 0 72px 0;
   text-align: center;
 }
