@@ -1,10 +1,20 @@
-
 const bcrypt = require("bcrypt");
 const { createUser, findUserByEmail } = require("../models/User");
 
 async function register(req, res) {
   try {
     const { username, email, password } = req.body;
+
+    // Validaciones básicas
+    if (!username || !email || !password) {
+      return res.status(400).json({ message: "Faltan campos obligatorios: username, email o password." });
+    }
+
+    // Validar formato de email (regex simple)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Formato de email inválido." });
+    }
 
     // Verificar si ya existe
     const existingUser = await findUserByEmail(email);
@@ -19,7 +29,7 @@ async function register(req, res) {
     await createUser({
       username,
       email,
-      passwordHash,
+      password: passwordHash, // 👈 aquí conviene guardar como "password"
       role: "cliente",
       provider: "local"
     });
@@ -35,7 +45,11 @@ async function register(req, res) {
 async function login(req, res) {
   try {
     const { email, password } = req.body;
-    const { findUserByEmail } = require("../models/User");
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email y contraseña son requeridos." });
+    }
+
     const user = await findUserByEmail(email);
     if (!user) {
       return res.status(400).json({ message: "Usuario o contraseña incorrectos" });
@@ -43,10 +57,12 @@ async function login(req, res) {
     if (!user.password) {
       return res.status(400).json({ message: "Usuario registrado con Google. Usa Google para iniciar sesión." });
     }
-    const valid = await require("bcrypt").compare(password, user.password);
+
+    const valid = await bcrypt.compare(password, user.password);
     if (!valid) {
       return res.status(400).json({ message: "Usuario o contraseña incorrectos" });
     }
+
     // Aquí podrías crear una sesión o token si lo deseas
     res.json({ message: "Login exitoso" });
   } catch (error) {
@@ -56,3 +72,4 @@ async function login(req, res) {
 }
 
 module.exports = { register, login };
+
