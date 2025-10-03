@@ -1,6 +1,8 @@
+import { useNavigate } from 'react-router-dom';
 import './RecipeCard.css';
 
 const RecipeCard = ({ recipe }) => {
+    const navigate = useNavigate();
         const getDifficultyColor = (difficulty) => {
         switch (difficulty) {
             case 'easy': return '#28a745';
@@ -60,7 +62,12 @@ const RecipeCard = ({ recipe }) => {
                         )}
                         
                         <div className="recipe-actions">
-                            <button className="btn btn-primary">Ver detalles</button>
+                            <button 
+                                className="btn btn-primary" 
+                                onClick={() => navigate(`/recipe/${recipe.id}`)}
+                            >
+                                Ver detalles
+                            </button>
                         </div>
         </div>
     );

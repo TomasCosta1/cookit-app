@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import Ingredients from './pages/Ingredients/Ingredients.jsx'
 import MyIngredients from './pages/MyIngredients/MyIngredients.jsx'
 import Recipes from './pages/RecipesList/RecipesList.jsx'
+import Recipe from './pages/Recipe/Recipe.jsx'
 import { Header } from './components/Header/Header.jsx'
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
         <Route path="/ingredients" element={<Ingredients />} />
         <Route path="/my-ingredients" element={<MyIngredients />} />
         <Route path='/recipes' element={<Recipes />} />
+        <Route path='/recipe/:id' element={<Recipe />} />
       </Routes>
     </BrowserRouter>
   )
