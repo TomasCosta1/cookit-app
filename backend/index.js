@@ -3,16 +3,13 @@ const session = require("express-session");
 const passport = require("passport");
 const cors = require("cors");
 require("dotenv").config();
-require("./src/config/passport");
-const { testConnection } = require('./config/database');
+require("./config/passport");
+const { testConnection } = require('./config/database'); // Usar database.js, no db.js
 
 const app = express();
 
 // Aviso de conexión exitosa a la base de datos
-const { db } = require('./src/config/db');
-db.authenticate()
-  .then(() => console.log('Conexión a la base de datos exitosa'))
-  .catch((err) => console.error('Error al conectar a la base de datos:', err));
+testConnection();
 
 
 // CORS para aceptar cookies desde frontend
@@ -38,20 +35,13 @@ app.use(passport.session());
 const authRoutes = require("./src/routes/authRoutes");
 app.use("/api/auth", authRoutes);
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log("Backend corriendo en http://localhost:3000");
-});
-// CORS (permitir frontend local en 5173)
-app.use(cors());
-
 app.get('/', (req, res) => {
-    res.send('Cookit API is running');
+  res.send('Cookit API is running');
 });
 
 app.use('/ingredients', require('./routes/ingredients'));
 
-testConnection();
-
-app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
+// Solo un app.listen y sin duplicados
+app.listen(process.env.PORT || 3000, () => {
+  console.log("Backend corriendo en http://localhost:3000");
 });

@@ -1,7 +1,7 @@
 
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const { User } = require('../models/User'); // tu modelo de usuario
+const { User } = require('../src/models/User'); // tu modelo de usuario
 
 // Serialización y deserialización de usuario para sesiones
 passport.serializeUser((user, done) => {
@@ -41,7 +41,7 @@ passport.use(new GoogleStrategy({
 
       // Solo enviar código de verificación si es un registro nuevo
       if (!user.is_verified && profile._json && profile._json.email_verified === false) {
-        const { db } = require('../config/db');
+        const { db } = require('../src/config/db');
         const { transporter } = require('../config/mailer');
         const verificationCode = Math.floor(100000 + Math.random() * 900000);
         await db.query(

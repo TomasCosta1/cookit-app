@@ -1,6 +1,6 @@
-import Register from "./pages/Register";
-import Login from "./pages/Login";
-import Home from "./pages/Home";
+import Register from "./pages/Register/Register.jsx";
+import Login from "./pages/Login/Login.jsx";
+import Home from "./pages/Home/Home.jsx";
 import './App.css'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import Ingredients from './pages/Ingredients/Ingredients.jsx'

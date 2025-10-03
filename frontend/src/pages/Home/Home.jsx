@@ -1,8 +1,13 @@
+import "./Home.css";
+
 export default function Home() {
   const isGuest = localStorage.getItem('cookit_guest') === '1';
   return (
-    <div style={{textAlign: 'center', marginTop: 50}}>
-      <h1>Bienvenido a Cookit!</h1>
+    <div className="home-container" style={{textAlign: 'center', marginTop: 50}}>
+      <h2 className="home-title">¡Bienvenido a Cookit!</h2>
+      <p className="home-desc">
+        Explora recetas, ingredientes y mucho más.
+      </p>
       {isGuest ? (
         <>
           <p>Estás navegando como <b>invitado</b>. Algunas funciones estarán limitadas.</p>
