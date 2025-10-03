@@ -192,7 +192,6 @@ router.put('/:id', async (req, res) => {
         
         await promisePool.execute(query, values);
         
-        // Obtener la receta actualizada
         const [updatedRecipe] = await promisePool.execute(
             'SELECT * FROM recipes WHERE id = ?',
             [id]
@@ -235,7 +234,6 @@ router.delete('/:id', async (req, res) => {
         await promisePool.execute('DELETE FROM recipes WHERE id = ?', [id]);
         
         res.status(200).json({
-            success: true,
             message: 'Receta eliminada exitosamente',
             data: existingRecipe[0]
         });

@@ -1,0 +1,130 @@
+.recipe-card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.recipe-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.recipe-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.recipe-title {
+    margin: 0;
+    color: #333;
+    font-size: 18px;
+    font-weight: 600;
+    flex: 1;
+    margin-right: 12px;
+}
+
+.recipe-difficulty {
+    flex-shrink: 0;
+}
+
+.recipe-description {
+    color: #666;
+    margin: 0 0 16px 0;
+    line-height: 1.5;
+}
+
+.recipe-meta {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: #777;
+}
+
+.recipe-time,
+.recipe-date {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.recipe-steps {
+    margin-bottom: 20px;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    border-left: 4px solid #fcba03;
+}
+
+.recipe-steps strong {
+    color: #333;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.recipe-steps p {
+    margin: 0;
+    color: #555;
+    line-height: 1.4;
+}
+
+.recipe-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.recipe-card .btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.recipe-card .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.recipe-card .btn-primary {
+    background-color: #fcba03;
+    color: white;
+}
+
+.recipe-card .btn-primary:hover:not(:disabled) {
+    background-color: #e0a502;
+}
+
+@media (max-width: 768px) {
+    .recipe-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .recipe-meta {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .recipe-actions {
+        justify-content: stretch;
+    }
+    
+    .recipe-actions .btn {
+        flex: 1;
+        min-width: 0;
+    }
+}

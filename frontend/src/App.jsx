@@ -2,7 +2,7 @@ import './App.css'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import Ingredients from './pages/Ingredients/Ingredients.jsx'
 import MyIngredients from './pages/MyIngredients/MyIngredients.jsx'
-import Recipes from './pages/Recipes/Recipes.jsx'
+import Recipes from './pages/RecipesList/RecipesList.jsx'
 import { Header } from './components/Header/Header.jsx'
 
 function App() {
