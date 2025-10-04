@@ -1,4 +1,5 @@
 const mysql = require("mysql2");
+const { Sequelize } = require("sequelize");
 require("dotenv").config();
 
 const dbConfig = {
@@ -12,25 +13,35 @@ const dbConfig = {
     queueLimit: 0,
 };
 
-// Crear pool de conexiones
+// Crear pool de conexiones para queries directos
 const pool = mysql.createPool(dbConfig);
-
-// Promisificar para usar async/await
 const promisePool = pool.promise();
+
+// Instancia de Sequelize para modelos ORM
+const sequelize = new Sequelize(
+    dbConfig.database,
+    dbConfig.user,
+    dbConfig.password,
+    {
+        host: dbConfig.host,
+        port: dbConfig.port,
+        dialect: "mysql",
+        logging: false,
+    }
+);
 
 const testConnection = async () => {
     try {
-        const connection = await promisePool.getConnection();
-        console.log("✅ Conexión a la base de datos establecida correctamente");
-        connection.release();
+        await sequelize.authenticate();
+        console.log("✅ Conexión a la base de datos establecida correctamente (Sequelize)");
         return true;
     } catch (error) {
-        console.error("❌ Error al conectar con la base de datos:", error.message);
+        console.error("❌ Error al conectar con la base de datos (Sequelize):", error.message);
         return false;
     }
 };
 
-// Función para ejecutar queries
+// Función para ejecutar queries directos
 const executeQuery = async (query, params = []) => {
     try {
         const [results] = await promisePool.execute(query, params);
@@ -41,7 +52,6 @@ const executeQuery = async (query, params = []) => {
     }
 };
 
-// Función para cerrar todas las conexiones
 const closePool = () => {
     pool.end();
     console.log("Pool de conexiones cerrado");
@@ -50,6 +60,7 @@ const closePool = () => {
 module.exports = {
     pool,
     promisePool,
+    sequelize,
     testConnection,
     executeQuery,
     closePool,
