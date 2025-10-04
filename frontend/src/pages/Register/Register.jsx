@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Register.css";
+import Button from "../../components/Button/Button";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -112,12 +113,14 @@ export default function Register() {
           required
         />
 
-        <button type="submit" className="register-btn">Registrarse</button>
+        <Button type="submit" variant="primary" size="large" className="btn--full-width">
+          Registrarse
+        </Button>
       </form>
 
       <div className="register-separator">o</div>
 
-      <button onClick={handleGoogleRegister} className="google-btn">
+      <Button onClick={handleGoogleRegister} variant="outline" size="large" className="btn--full-width google-btn">
         <span className="google-icon-wrapper">
           <img
             src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
@@ -127,11 +130,11 @@ export default function Register() {
           />
         </span>
         <span>Registrarse con Google</span>
-      </button>
+      </Button>
 
-      <button type="button" className="switch-btn" onClick={() => navigate("/login")}>
+      <Button type="button" variant="ghost" size="medium" className="switch-btn" onClick={() => navigate("/login")}>
         ¿Ya tienes cuenta? Inicia sesión
-      </button>
+      </Button>
 
       {msg && (
         <p className={`register-msg ${success ? "register-success" : "register-error"}`}>{msg}</p>

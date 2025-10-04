@@ -8,6 +8,7 @@ import {
 import "./Ingredients.css";
 import { IngredientsCard } from "../../components/IngredientsCard/IngredientsCard.jsx";
 import SearchInput from "../../components/SearchInput/SearchInput";
+import Button from "../../components/Button/Button";
 
 const API_BASE = "http://localhost:3000";
 
@@ -58,7 +59,13 @@ export default function Ingredients() {
     <div className="ingredients-page">
       <h2>Ingredientes</h2>
       <div className="ingredients-actions">
-        <Link to="/my-ingredients" className="btn btn-primary">Mis ingredientes</Link>
+        <Button 
+          variant="primary" 
+          size="medium"
+          onClick={() => window.location.href = '/my-ingredients'}
+        >
+          Mis ingredientes
+        </Button>
       </div>
       <SearchInput
         value={q}
@@ -69,24 +76,24 @@ export default function Ingredients() {
 
       {loading && <p>Cargando...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
-      <div className="ingredients-pager" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, opacity: 0.9 }}>
-        <button
-          className="btn"
+      <div className="ingredients-pager">
+        <Button
+          variant="ghost"
+          size="small"
           onClick={() => setPage((p) => Math.max(1, p - 1))}
           disabled={page <= 1}
-          aria-label="Página anterior"
         >
           Anterior
-        </button>
-        <span>Página {page} de {totalPages}</span>
-        <button
-          className="btn"
+        </Button>
+        <span className="page-info">Página {page} de {totalPages}</span>
+        <Button
+          variant="ghost"
+          size="small"
           onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
           disabled={page >= totalPages}
-          aria-label="Página siguiente"
         >
           Siguiente
-        </button>
+        </Button>
       </div>
 
       <ul className="ingredients-list">

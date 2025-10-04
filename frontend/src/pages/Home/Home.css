@@ -28,46 +28,6 @@
   margin-top: 20px;
 }
 
-.btn-primary {
-  margin-top: 24px;
-  background: #ffc107;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 24px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
-}
-
-.btn-primary:hover {
-  background: #e0a800;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
-}
-
-.btn-danger {
-  margin-top: 24px;
-  background: #dc3545;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 24px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
-}
-
-.btn-danger:hover {
-  background: #c82333;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
-}
-
 .guest-message {
   margin-bottom: 16px;
 }
@@ -97,14 +57,6 @@
   .home-desc,
   .user-greeting,
   .guest-message {
-    font-size: 16px;
-  }
-  
-  .btn-primary,
-  .btn-danger {
-    width: 100%;
-    max-width: 280px;
-    padding: 12px 20px;
     font-size: 16px;
   }
 }

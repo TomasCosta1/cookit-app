@@ -1,5 +1,6 @@
 import React from "react";
 import "./IngredientsCard.css";
+import Button from "../Button/Button";
 
 export const IngredientsCard = (props = {}) => {
   const { id, name, selected, removeMyIngredient, setRows, addMyIngredient } = props;
@@ -8,25 +9,27 @@ export const IngredientsCard = (props = {}) => {
     <li key={id} className="ingredients-item card">
       <span>{displayName}</span>
       {selected ? (
-        <button
-          className="btn btn-danger"
+        <Button
+          variant="danger"
+          size="small"
           onClick={() => {
             if (id != null && removeMyIngredient) removeMyIngredient(id);
             if (setRows) setRows((r) => [...r]);
           }}
         >
           Quitar
-        </button>
+        </Button>
       ) : (
-        <button
-          className="btn btn-primary"
+        <Button
+          variant="primary"
+          size="small"
           onClick={() => {
             if (addMyIngredient) addMyIngredient({ id, name: displayName });
             if (setRows) setRows((r) => [...r]);
           }}
         >
           Agregar
-        </button>
+        </Button>
       )}
     </li>
   );

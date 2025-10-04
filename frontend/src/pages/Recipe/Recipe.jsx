@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./Recipe.css";
+import Button from "../../components/Button/Button";
 
 const API_BASE = "http://localhost:3000";
 
@@ -81,9 +82,9 @@ export default function Recipe() {
                 <div className="error">
                     <h2>Error</h2>
                     <p>{error}</p>
-                    <button className="btn btn-primary" onClick={handleGoBack}>
+                    <Button variant="primary" size="medium" onClick={handleGoBack}>
                         Volver a recetas
-                    </button>
+                    </Button>
                 </div>
             </div>
         );
@@ -95,9 +96,9 @@ export default function Recipe() {
                 <div className="error">
                     <h2>Receta no encontrada</h2>
                     <p>La receta que buscas no existe.</p>
-                    <button className="btn btn-primary" onClick={handleGoBack}>
+                    <Button variant="primary" size="medium" onClick={handleGoBack}>
                         Volver a recetas
-                    </button>
+                    </Button>
                 </div>
             </div>
         );
@@ -106,9 +107,9 @@ export default function Recipe() {
     return (
         <div className="recipe-page">
             <div className="recipe-header-actions">
-                <button className="btn btn-primary" onClick={handleGoBack}>
+                <Button variant="secondary" size="medium" onClick={handleGoBack}>
                     ← Volver a recetas
-                </button>
+                </Button>
             </div>
 
             <div className="recipe-detail">

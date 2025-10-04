@@ -25,33 +25,19 @@
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
 }
 
-.btn {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    text-decoration: none;
-    display: inline-flex;
+.recipes-pager {
+    display: flex;
     align-items: center;
     justify-content: center;
+    gap: 12px;
+    opacity: 0.9;
+    margin-bottom: 20px;
 }
 
-.btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-.recipes-pager .btn {
-    background-color: #f8f9fa;
-    color: #333;
-    border: 1px solid #dee2e6;
-}
-
-.recipes-pager .btn:hover:not(:disabled) {
-    background-color: #e9ecef;
+.page-info {
+    font-size: 14px;
+    color: #6c757d;
+    font-weight: 500;
 }
 
 .no-results {

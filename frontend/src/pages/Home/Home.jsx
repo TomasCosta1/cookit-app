@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom"; 
 import "./Home.css";
+import Button from "../../components/Button/Button";
 
 export default function Home() {
   const [isGuest, setIsGuest] = useState(false);
@@ -60,20 +61,22 @@ export default function Home() {
       {isGuest ? (
         <>
           <p className="guest-message">Estás navegando como <b>invitado</b>. Algunas funciones estarán limitadas.</p>
-          <button
+          <Button
             onClick={handleLoginRedirect}
-            className="btn-primary"
+            variant="primary"
+            size="large"
           >
             Iniciar sesión
-          </button>
+          </Button>
         </>
       ) : (
-        <button
+        <Button
           onClick={handleLogout}
-          className="btn-danger"
+          variant="danger"
+          size="large"
         >
           Cerrar sesión
-        </button>
+        </Button>
       )}
     </div>
   );

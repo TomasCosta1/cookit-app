@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
+import Button from "../../components/Button/Button";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -32,7 +33,6 @@ export default function Login() {
         return;
       }
 
-      // ✅ Guardar usuario en localStorage para mantener sesión
       localStorage.setItem("cookit_user", JSON.stringify({ name: data.username }));
       localStorage.setItem("cookit_guest", "0");
 
@@ -52,7 +52,7 @@ export default function Login() {
 
   const handleGuest = () => {
     localStorage.setItem("cookit_guest", "1");
-    localStorage.removeItem("cookit_user"); // asegurarse de borrar sesión anterior
+    localStorage.removeItem("cookit_user");
     navigate("/");
   };
 
@@ -76,18 +76,18 @@ export default function Login() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit" className="login-btn">
+        <Button type="submit" variant="primary" size="large" className="btn--full-width">
           Login
-        </button>
+        </Button>
       </form>
 
-      <button onClick={handleGuest} className="guest-btn">
+      <Button onClick={handleGuest} variant="ghost" size="large" className="btn--full-width guest-btn">
         Entrar como invitado
-      </button>
+      </Button>
 
       <div className="login-separator">o</div>
 
-      <button onClick={handleGoogleLogin} className="google-btn">
+      <Button onClick={handleGoogleLogin} variant="outline" size="large" className="btn--full-width google-btn">
         <span className="google-icon-wrapper">
           <img
             src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
@@ -97,15 +97,17 @@ export default function Login() {
           />
         </span>
         <span>Iniciar sesión con Google</span>
-      </button>
+      </Button>
 
-      <button
+      <Button
         type="button"
+        variant="ghost"
+        size="medium"
         className="switch-btn"
         onClick={() => navigate("/register")}
       >
         ¿No tienes cuenta? Regístrate
-      </button>
+      </Button>
 
       {msg && (
         <p className={`login-msg ${success ? "login-success" : "login-error"}`}>{msg}</p>
