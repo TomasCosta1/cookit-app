@@ -4,6 +4,28 @@
   padding: 0 16px;
 }
 
+.myingredients-actions {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.no-ingredients {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+}
+
+.no-ingredients p {
+  margin: 8px 0;
+}
+
+.no-ingredients p:first-child {
+  font-size: 18px;
+  font-weight: 500;
+  color: #555;
+}
+
 .myingredients-list {
   list-style: none;
   padding: 0;

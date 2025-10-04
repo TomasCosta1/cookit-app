@@ -9,9 +9,19 @@
   justify-content: center;
 }
 
-.ingredients-pager button.btn[disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
+.ingredients-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  opacity: 0.9;
+  margin: 20px 0;
+}
+
+.page-info {
+  font-size: 14px;
+  color: #6c757d;
+  font-weight: 500;
 }
 
 .ingredients-list {

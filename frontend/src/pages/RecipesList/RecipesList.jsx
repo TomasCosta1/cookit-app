@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import "./RecipesList.css";
 import RecipeCard from "../../components/RecipeCard/RecipeCard";
 import SearchInput from "../../components/SearchInput/SearchInput";
+import Button from "../../components/Button/Button";
 
 const API_BASE = "http://localhost:3000";
 
@@ -84,31 +85,24 @@ export default function RecipesList() {
             {loading && <p>Cargando recetas...</p>}
             {error && <p style={{ color: "red" }}>Error: {error}</p>}
             
-            <div className="recipes-pager" style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                gap: 12, 
-                opacity: 0.9,
-                marginBottom: '20px'
-            }}>
-                <button
-                    className="btn"
+            <div className="recipes-pager">
+                <Button
+                    variant="ghost"
+                    size="small"
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={page <= 1}
-                    aria-label="Página anterior"
                 >
                     Anterior
-                </button>
-                <span>Página {page} de {totalPages}</span>
-                <button
-                    className="btn"
+                </Button>
+                <span className="page-info">Página {page} de {totalPages}</span>
+                <Button
+                    variant="ghost"
+                    size="small"
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                     disabled={page >= totalPages}
-                    aria-label="Página siguiente"
                 >
                     Siguiente
-                </button>
+                </Button>
             </div>
 
             <ul className="recipes-list">

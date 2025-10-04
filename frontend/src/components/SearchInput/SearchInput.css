@@ -16,8 +16,8 @@
 
 .search-input input:focus {
     outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    border-color: #fcba03;
+    box-shadow: 0 0 0 3px rgba(252, 186, 3, 0.1);
 }
 
 .search-input input::placeholder {

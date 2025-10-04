@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import './RecipeCard.css';
+import Button from '../Button/Button';
 
 const RecipeCard = ({ recipe }) => {
     const navigate = useNavigate();
@@ -62,12 +63,13 @@ const RecipeCard = ({ recipe }) => {
                         )}
                         
                         <div className="recipe-actions">
-                            <button 
-                                className="btn btn-primary" 
+                            <Button 
+                                variant="primary" 
+                                size="medium"
                                 onClick={() => navigate(`/recipe/${recipe.id}`)}
                             >
                                 Ver detalles
-                            </button>
+                            </Button>
                         </div>
         </div>
     );
