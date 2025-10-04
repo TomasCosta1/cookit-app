@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import "./Register.css";
 import Button from "../../components/Button/Button";
 
+const API_BASE = import.meta.env.VITE_API_URL;
+
 export default function Register() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -40,7 +42,7 @@ export default function Register() {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/api/auth/register", {
+      const res = await fetch(`${API_BASE}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, username, password }),
@@ -66,7 +68,7 @@ export default function Register() {
   };
 
   const handleGoogleRegister = () => {
-    window.location.href = "http://localhost:3000/api/auth/google";
+    window.location.href = `${API_BASE}/api/auth/google`;
   };
 
   return (

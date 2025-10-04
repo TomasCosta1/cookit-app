@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import Button from "../../components/Button/Button";
 
+const API_BASE = import.meta.env.VITE_API_URL;
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,7 +17,7 @@ export default function Login() {
     setMsg("");
     setSuccess(false);
     try {
-      const res = await fetch("http://localhost:3000/api/auth/login", {
+      const res = await fetch(`${API_BASE}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -47,7 +49,7 @@ export default function Login() {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:3000/api/auth/google";
+    window.location.href = `${API_BASE}/api/auth/google`;
   };
 
   const handleGuest = () => {
