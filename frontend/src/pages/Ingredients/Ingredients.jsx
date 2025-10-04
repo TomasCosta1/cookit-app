@@ -7,6 +7,7 @@ import {
 } from "../../lib/storage.js";
 import "./Ingredients.css";
 import { IngredientsCard } from "../../components/IngredientsCard/IngredientsCard.jsx";
+import SearchInput from "../../components/SearchInput/SearchInput";
 
 const API_BASE = "http://localhost:3000";
 
@@ -59,16 +60,12 @@ export default function Ingredients() {
       <div className="ingredients-actions">
         <Link to="/my-ingredients" className="btn btn-primary">Mis ingredientes</Link>
       </div>
-      <div className="ingredients-input">
-        <input
-          placeholder="Buscar..."
-          value={q}
-          onChange={(e) => {
-            setQ(e.target.value);
-            setPage(1);
-          }}
-        />
-      </div>
+      <SearchInput
+        value={q}
+        onChange={setQ}
+        placeholder="Buscar ingredientes..."
+        onPageReset={() => setPage(1)}
+      />
 
       {loading && <p>Cargando...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}

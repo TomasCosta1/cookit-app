@@ -34,12 +34,14 @@ app.use(passport.session());
 // Rutas de autenticación
 const authRoutes = require("./src/routes/authRoutes");
 app.use("/api/auth", authRoutes);
+app.use(cors());
 
 app.get('/', (req, res) => {
   res.send('Cookit API is running');
 });
 
 app.use('/ingredients', require('./routes/ingredients'));
+app.use('/recipes', require('./routes/recipes'));
 
 // Solo un app.listen y sin duplicados
 app.listen(process.env.PORT || 3000, () => {
