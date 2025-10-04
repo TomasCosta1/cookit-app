@@ -60,7 +60,7 @@ const closePool = () => {
 module.exports = {
     pool,
     promisePool,
-    sequelize,      // <--- Exporta la instancia de Sequelize
+    sequelize,
     testConnection,
     executeQuery,
     closePool,
