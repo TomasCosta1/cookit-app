@@ -20,17 +20,26 @@ export default function Login() {
         body: JSON.stringify({ email, password }),
         credentials: "include"
       });
+
       const data = await res.json();
-      if (!res.ok && (data.message === "Usuario o contraseña incorrectos" || data.message === "Usuario registrado con Google. Usa Google para iniciar sesión.")) {
-        setMsg("Email y/o contraseña incorrectos");
+
+      if (!res.ok) {
+        const errorMsg = ["Usuario o contraseña incorrectos", "Usuario registrado con Google. Usa Google para iniciar sesión."].includes(data.message)
+          ? "Email y/o contraseña incorrectos"
+          : data.message;
+        setMsg(errorMsg);
         setSuccess(false);
         return;
       }
+
+      // ✅ Guardar usuario en localStorage para mantener sesión
+      localStorage.setItem("cookit_user", JSON.stringify({ name: data.username }));
+      localStorage.setItem("cookit_guest", "0");
+
       setMsg(data.message);
-      if (res.ok) {
-        setSuccess(true);
-        setTimeout(() => navigate("/"), 1000);
-      }
+      setSuccess(true);
+
+      setTimeout(() => navigate("/"), 1000);
     } catch (err) {
       setMsg("Error en el servidor");
       console.error(err);
@@ -41,10 +50,10 @@ export default function Login() {
     window.location.href = "http://localhost:3000/api/auth/google";
   };
 
-  // Manejo de invitado: setear en localStorage y navegar
   const handleGuest = () => {
-    localStorage.setItem('cookit_guest', '1');
-    navigate('/');
+    localStorage.setItem("cookit_guest", "1");
+    localStorage.removeItem("cookit_user"); // asegurarse de borrar sesión anterior
+    navigate("/");
   };
 
   return (
@@ -104,3 +113,4 @@ export default function Login() {
     </div>
   );
 }
+

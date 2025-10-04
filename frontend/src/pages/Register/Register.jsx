@@ -6,31 +6,57 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
   const [msg, setMsg] = useState("");
   const [success, setSuccess] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState(0);
   const navigate = useNavigate();
+
+  const calculateStrength = (pass) => {
+    let strength = 0;
+    if (pass.length >= 6) strength++;
+    if (pass.length >= 10) strength++;
+    if (/[A-Z]/.test(pass)) strength++;
+    if (/[0-9]/.test(pass)) strength++;
+    if (/[^A-Za-z0-9]/.test(pass)) strength++;
+    return strength;
+  };
+
+  const handlePasswordChange = (e) => {
+    const newPass = e.target.value;
+    setPassword(newPass);
+    setPasswordStrength(calculateStrength(newPass));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMsg("");
     setSuccess(false);
+
+    if (password !== repeatPassword) {
+      setMsg("Las contraseñas no coinciden");
+      return;
+    }
+
     try {
       const res = await fetch("http://localhost:3000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, username, password }),
-        credentials: "include"
+        credentials: "include",
       });
+
       const data = await res.json();
       if (!res.ok && data.message) {
         setMsg(data.message);
         setSuccess(false);
         return;
       }
+
       setMsg(data.message || "Registro exitoso");
       if (res.ok) {
         setSuccess(true);
-        setTimeout(() => navigate("/login"), 1200);
+        setTimeout(() => navigate("/login"), 1500);
       }
     } catch (err) {
       setMsg("Error en el servidor");
@@ -67,12 +93,26 @@ export default function Register() {
           type="password"
           placeholder="Contraseña"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={handlePasswordChange}
           required
         />
-        <button type="submit" className="register-btn">
-          Registrarse
-        </button>
+
+        <div className="password-strength">
+          {[1,2,3,4,5].map((i) => (
+            <div key={i} className={`strength-bar ${passwordStrength >= i ? "active" : ""}`}></div>
+          ))}
+        </div>
+
+        <input
+          className="register-input"
+          type="password"
+          placeholder="Repetir contraseña"
+          value={repeatPassword}
+          onChange={(e) => setRepeatPassword(e.target.value)}
+          required
+        />
+
+        <button type="submit" className="register-btn">Registrarse</button>
       </form>
 
       <div className="register-separator">o</div>
@@ -83,17 +123,13 @@ export default function Register() {
             src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
             alt="Google"
             className="google-icon"
-            onError={e => e.target.style.display='none'}
+            onError={(e) => (e.target.style.display = "none")}
           />
         </span>
         <span>Registrarse con Google</span>
       </button>
 
-      <button
-        type="button"
-        className="switch-btn"
-        onClick={() => navigate("/login")}
-      >
+      <button type="button" className="switch-btn" onClick={() => navigate("/login")}>
         ¿Ya tienes cuenta? Inicia sesión
       </button>
 

@@ -120,6 +120,36 @@
   color: #d32f2f;
 }
 
+.password-strength {
+  display: flex;
+  gap: 4px;
+  margin: 8px 0;
+}
+
+.strength-bar {
+  flex: 1;
+  height: 6px;
+  background: #ddd;
+  border-radius: 3px;
+  transition: background 0.3s;
+}
+
+.strength-bar.active:nth-child(1) {
+  background: red;
+}
+.strength-bar.active:nth-child(2) {
+  background: orange;
+}
+.strength-bar.active:nth-child(3) {
+  background: yellowgreen;
+}
+.strength-bar.active:nth-child(4) {
+  background: green;
+}
+.strength-bar.active:nth-child(5) {
+  background: darkgreen;
+}
+
 @media (max-width: 500px) {
   .register-container {
     max-width: 98vw;

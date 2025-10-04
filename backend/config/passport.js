@@ -39,29 +39,6 @@ passport.use(new GoogleStrategy({
         });
       }
 
-      // Solo enviar código de verificación si es un registro nuevo
-      if (!user.is_verified && profile._json && profile._json.email_verified === false) {
-        const { db } = require('../src/config/db');
-        const { transporter } = require('../config/mailer');
-        const verificationCode = Math.floor(100000 + Math.random() * 900000);
-        await db.query(
-          `INSERT INTO verification_codes (user_id, code, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 15 MINUTE))`,
-          { replacements: [user.id, verificationCode] }
-        );
-        await transporter.sendMail({
-          from: "mazzajoaquin22@gmail.com",
-          to: user.email,
-          subject: "Verifica tu cuenta",
-          text: `Tu código de verificación es: ${verificationCode}`
-        }, (err, info) => {
-          if (err) {
-            console.error('Error enviando mail de verificación Google:', err);
-          } else {
-            console.log('Mail de verificación Google enviado:', info.response);
-          }
-        });
-      }
-
   return done(null, user);
     } catch (err) {
       return done(err, null);
@@ -69,16 +46,3 @@ passport.use(new GoogleStrategy({
   }
 ));
 
-// Serialización y deserialización de usuario para sesiones
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
-
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await User.findByPk(id);
-    done(null, user);
-  } catch (err) {
-    done(err, null);
-  }
-});

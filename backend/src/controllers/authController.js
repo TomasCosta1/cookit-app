@@ -1,19 +1,20 @@
 const bcrypt = require("bcrypt");
 const { createUser, findUserByEmail } = require("../models/User");
 
+// Registro
 async function register(req, res) {
   try {
     const { username, email, password } = req.body;
 
-    // Validaciones básicas
+    // Validar campos
     if (!username || !email || !password) {
-      return res.status(400).json({ message: "Faltan campos obligatorios: username, email o password." });
+      return res.status(400).json({ message: "Todos los campos son obligatorios" });
     }
 
-    // Validar formato de email (regex simple)
+    // Validar email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({ message: "Formato de email inválido." });
+      return res.status(400).json({ message: "Formato de email inválido" });
     }
 
     // Verificar si ya existe
@@ -25,13 +26,13 @@ async function register(req, res) {
     // Hashear password
     const passwordHash = await bcrypt.hash(password, 10);
 
-    // Crear usuario directamente
+    // Crear usuario en DB
     await createUser({
       username,
       email,
-      password: passwordHash, // 👈 aquí conviene guardar como "password"
+      passwordHash,
       role: "cliente",
-      provider: "local"
+      provider: "local",
     });
 
     res.status(201).json({ message: "Usuario registrado correctamente." });
@@ -41,16 +42,12 @@ async function register(req, res) {
   }
 }
 
-// Login local
+// Login
 async function login(req, res) {
   try {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ message: "Email y contraseña son requeridos." });
-    }
-
     const user = await findUserByEmail(email);
+
     if (!user) {
       return res.status(400).json({ message: "Usuario o contraseña incorrectos" });
     }
@@ -63,8 +60,7 @@ async function login(req, res) {
       return res.status(400).json({ message: "Usuario o contraseña incorrectos" });
     }
 
-    // Aquí podrías crear una sesión o token si lo deseas
-    res.json({ message: "Login exitoso" });
+    res.json({ message: "Login exitoso", username: user.username });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error en el servidor" });
@@ -72,4 +68,3 @@ async function login(req, res) {
 }
 
 module.exports = { register, login };
-
