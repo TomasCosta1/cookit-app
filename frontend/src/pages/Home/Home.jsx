@@ -48,21 +48,21 @@ export default function Home() {
   };
 
   return (
-    <div className="home-container" style={{ textAlign: "center", marginTop: 50 }}>
+    <div className="home-container home-container-centered">
       <h2 className="home-title">¡Bienvenido a Cookit!</h2>
 
       {username ? (
-        <p>Hola, <b>{username}</b></p>
+        <p className="user-greeting">Hola, <b>{username}</b></p>
       ) : (
         <p className="home-desc">Explora recetas, ingredientes y mucho más.</p>
       )}
 
       {isGuest ? (
         <>
-          <p>Estás navegando como <b>invitado</b>. Algunas funciones estarán limitadas.</p>
+          <p className="guest-message">Estás navegando como <b>invitado</b>. Algunas funciones estarán limitadas.</p>
           <button
             onClick={handleLoginRedirect}
-            style={{marginTop: 20, background: "#007bff", color: "#fff", border: "none", borderRadius: 5, padding: "10px 20px", cursor: "pointer"}}
+            className="btn-primary"
           >
             Iniciar sesión
           </button>
@@ -70,7 +70,7 @@ export default function Home() {
       ) : (
         <button
           onClick={handleLogout}
-          style={{marginTop: 20, background: "#dc3545", color: "#fff", border: "none", borderRadius: 5, padding: "10px 20px", cursor: "pointer"}}
+          className="btn-danger"
         >
           Cerrar sesión
         </button>

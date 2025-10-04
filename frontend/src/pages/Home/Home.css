@@ -4,7 +4,7 @@
   padding: 2rem 1.5rem;
   background: #fff;
   border-radius: 18px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -23,31 +23,99 @@
   text-align: center;
 }
 
-.btn-logout {
+.home-container-centered {
+  text-align: center;
   margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #ff4d4f;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
 }
 
-.btn-login {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #4CAF50;
-  color: white;
+.btn-primary {
+  margin-top: 24px;
+  background: #ffc107;
+  color: #fff;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
+  padding: 12px 24px;
   cursor: pointer;
   font-size: 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+}
+
+.btn-primary:hover {
+  background: #e0a800;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+}
+
+.btn-danger {
+  margin-top: 24px;
+  background: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+.btn-danger:hover {
+  background: #c82333;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+}
+
+.guest-message {
+  margin-bottom: 16px;
+}
+
+.user-greeting {
+  margin-bottom: 16px;
+  font-size: 18px;
 }
 
 @media (max-width: 500px) {
   .home-container {
-    max-width: 98vw;
-    padding: 1.2rem 0.5rem;
+    max-width: calc(100vw - 32px);
+    margin: 20px 16px;
+    padding: 1.5rem 1rem;
+    border-radius: 12px;
+  }
+  
+  .home-container-centered {
+    margin-top: 10px;
+  }
+  
+  .home-title {
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
+  
+  .home-desc,
+  .user-greeting,
+  .guest-message {
+    font-size: 16px;
+  }
+  
+  .btn-primary,
+  .btn-danger {
+    width: 100%;
+    max-width: 280px;
+    padding: 12px 20px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 320px) {
+  .home-container {
+    margin: 16px 12px;
+    padding: 1.2rem 0.8rem;
+  }
+  
+  .home-title {
+    font-size: 22px;
   }
 }
