@@ -6,8 +6,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-
-// CORS (permitir frontend local en 5173)
 app.use(cors());
 
 app.get('/', (req, res) => {
@@ -15,6 +13,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/ingredients', require('./routes/ingredients'));
+app.use('/recipes', require('./routes/recipes'));
 
 testConnection();
 
