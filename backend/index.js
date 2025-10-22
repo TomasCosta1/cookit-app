@@ -17,6 +17,9 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
+
 app.use(session({
   secret: "mi_secreto",
   resave: false,
