@@ -1,10 +1,16 @@
 import { useNavigate } from 'react-router-dom';
 import './RecipeCard.css';
 import Button from '../Button/Button';
+import FavoriteButton from '../FavoriteButton/FavoriteButton';
+import { useAuth } from '../../hooks/useAuth';
+import { useFavorites } from '../../hooks/useFavorites';
 
 const RecipeCard = ({ recipe }) => {
     const navigate = useNavigate();
-        const getDifficultyColor = (difficulty) => {
+    const { user, isAuthenticated } = useAuth();
+    const { isFavorite, toggleFavorite } = useFavorites(user?.id);
+    
+    const getDifficultyColor = (difficulty) => {
         switch (difficulty) {
             case 'easy': return '#28a745';
             case 'medium': return '#ffc107';
@@ -24,21 +30,31 @@ const RecipeCard = ({ recipe }) => {
     return (
         <div className="recipe-card">
             <div className="recipe-header">
-                            <h3 className="recipe-title">{recipe.title}</h3>
-                            <span 
-                                className="recipe-difficulty"
-                                style={{ 
-                                    backgroundColor: getDifficultyColor(recipe.difficulty),
-                                    color: 'white',
-                                    padding: '4px 8px',
-                                    borderRadius: '4px',
-                                    fontSize: '12px',
-                                    fontWeight: 'bold'
-                                }}
-                            >
-                                {getDifficultyText(recipe.difficulty)}
-                            </span>
-                        </div>
+                <div className="recipe-title-container">
+                    <h3 className="recipe-title">{recipe.title}</h3>
+                    {isAuthenticated && (
+                        <FavoriteButton
+                            recipeId={recipe.id}
+                            isFavorite={isFavorite(recipe.id)}
+                            onToggle={toggleFavorite}
+                            size="small"
+                        />
+                    )}
+                </div>
+                <span 
+                    className="recipe-difficulty"
+                    style={{ 
+                        backgroundColor: getDifficultyColor(recipe.difficulty),
+                        color: 'white',
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                        fontSize: '12px',
+                        fontWeight: 'bold'
+                    }}
+                >
+                    {getDifficultyText(recipe.difficulty)}
+                </span>
+            </div>
                         
                         {recipe.description && (
                             <p className="recipe-description">{recipe.description}</p>

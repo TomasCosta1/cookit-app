@@ -41,6 +41,7 @@ app.get('/', (req, res) => {
 
 app.use('/ingredients', require('./src/routes/ingredients'));
 app.use('/recipes', require('./src/routes/recipes'));
+app.use('/favorites', require('./src/routes/favorites'));
 
 testConnection();
 

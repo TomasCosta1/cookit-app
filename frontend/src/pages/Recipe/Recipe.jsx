@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./Recipe.css";
 import Button from "../../components/Button/Button";
+import FavoriteButton from "../../components/FavoriteButton/FavoriteButton";
+import { useAuth } from "../../hooks/useAuth";
+import { useFavorites } from "../../hooks/useFavorites";
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
@@ -11,6 +14,8 @@ export default function Recipe() {
     const [recipe, setRecipe] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const { user, isAuthenticated } = useAuth();
+    const { isFavorite, toggleFavorite } = useFavorites(user?.id);
 
     useEffect(() => {
         if (!id || isNaN(id)) {
@@ -63,7 +68,7 @@ export default function Recipe() {
     };
 
     const handleGoBack = () => {
-        navigate('/recipes');
+        navigate(-1);
     };
 
     if (loading) {
@@ -83,7 +88,7 @@ export default function Recipe() {
                     <h2>Error</h2>
                     <p>{error}</p>
                     <Button variant="primary" size="medium" onClick={handleGoBack}>
-                        Volver a recetas
+                        Volver
                     </Button>
                 </div>
             </div>
@@ -97,7 +102,7 @@ export default function Recipe() {
                     <h2>Receta no encontrada</h2>
                     <p>La receta que buscas no existe.</p>
                     <Button variant="primary" size="medium" onClick={handleGoBack}>
-                        Volver a recetas
+                        Volver
                     </Button>
                 </div>
             </div>
@@ -108,13 +113,23 @@ export default function Recipe() {
         <div className="recipe-page">
             <div className="recipe-header-actions">
                 <Button variant="secondary" size="medium" onClick={handleGoBack}>
-                    ← Volver a recetas
+                    ← Volver
                 </Button>
             </div>
 
             <div className="recipe-detail">
                 <div className="recipe-detail-header">
-                    <h1 className="recipe-detail-title">{recipe.title}</h1>
+                    <div className="recipe-detail-title-container">
+                        <h1 className="recipe-detail-title">{recipe.title}</h1>
+                        {isAuthenticated && (
+                            <FavoriteButton
+                                recipeId={recipe.id}
+                                isFavorite={isFavorite(recipe.id)}
+                                onToggle={toggleFavorite}
+                                size="large"
+                            />
+                        )}
+                    </div>
                     <span 
                         className="recipe-detail-difficulty"
                         style={{ 
