@@ -25,7 +25,7 @@ async function register(req, res) {
     await createUser({
       username,
       email,
-      password: passwordHash, // asegurate de que el campo sea 'password' en la DB
+      password: passwordHash,
       role: "cliente",
       provider: "local",
     });
@@ -58,7 +58,7 @@ async function login(req, res) {
     // Enviar cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, // true si usás HTTPS
+      secure: false,
       sameSite: "lax",
     });
 

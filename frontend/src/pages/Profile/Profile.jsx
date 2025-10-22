@@ -6,7 +6,7 @@ const API_BASE = import.meta.env.VITE_API_URL;
 
 export default function Profile() {
   const [user, setUser] = useState(null);
-  const [isGuest, setIsGuest] = useState(false); // 👈 nuevo estado
+  const [isGuest, setIsGuest] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,7 +17,7 @@ export default function Profile() {
         });
 
         if (!res.ok) {
-          setIsGuest(true); // 👈 no autenticado → modo invitado
+          setIsGuest(true);
           return;
         }
 
@@ -40,10 +40,8 @@ export default function Profile() {
     setIsGuest(true);
   };
 
-  // 🟡 Si está cargando (no sabemos aún si es invitado o usuario)
   if (!user && !isGuest) return <p className="loading">Cargando perfil...</p>;
 
-  // 🔴 Si es invitado
   if (isGuest) {
     return (
       <div className="profile-container guest">
@@ -56,7 +54,6 @@ export default function Profile() {
     );
   }
 
-  // 🟢 Si está logueado
   return (
     <div className="profile-container">
       <h2>Mi Perfil</h2>

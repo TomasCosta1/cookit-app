@@ -23,7 +23,6 @@ router.get('/google/callback',
 
     const frontend = process.env.FRONTEND_URL || 'http://localhost:5173';
 
-    // Crear token JWT igual que en tu login local
     const token = jwt.sign(
       {
         id: req.user.id,
@@ -33,15 +32,13 @@ router.get('/google/callback',
       process.env.JWT_SECRET || 'cookit_secret',
       { expiresIn: '1h' }
     );
-
-    // Enviar cookie segura
+    // Enviar cookie
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
     });
 
-    // Redirigir al frontend
     res.redirect(`${frontend}/profile`);
   }
 );
