@@ -17,6 +17,9 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
+
 app.use(session({
   secret: "mi_secreto",
   resave: false,
@@ -30,7 +33,6 @@ app.use(passport.session());
 // Rutas de autenticación
 const authRoutes = require("./src/routes/authRoutes");
 app.use("/api/auth", authRoutes);
-app.use(cors());
 
 app.get('/', (req, res) => {
   res.send('Cookit API is running');

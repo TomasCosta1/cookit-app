@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import Button from "../../components/Button/Button";
@@ -12,39 +12,44 @@ export default function Login() {
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMsg("");
     setSuccess(false);
+
     try {
       const res = await fetch(`${API_BASE}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
-        credentials: "include"
+        credentials: "include",
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        const errorMsg = ["Usuario o contraseña incorrectos", "Usuario registrado con Google. Usa Google para iniciar sesión."].includes(data.message)
-          ? "Email y/o contraseña incorrectos"
-          : data.message;
+        const errorMsg =
+          [
+            "Usuario o contraseña incorrectos",
+            "Usuario registrado con Google. Usa Google para iniciar sesión.",
+          ].includes(data.message)
+            ? "Email y/o contraseña incorrectos"
+            : data.message;
         setMsg(errorMsg);
-        setSuccess(false);
         return;
       }
 
-      localStorage.setItem("cookit_user", JSON.stringify({ name: data.username }));
-      localStorage.setItem("cookit_guest", "0");
-
-      setMsg(data.message);
+      setMsg(`Bienvenido ${data.username}`);
       setSuccess(true);
 
-      setTimeout(() => navigate("/"), 1000);
+      setTimeout(() => navigate("/profile"), 1000);
     } catch (err) {
-      setMsg("Error en el servidor");
       console.error(err);
+      setMsg("Error en el servidor");
     }
   };
 
@@ -54,13 +59,13 @@ export default function Login() {
 
   const handleGuest = () => {
     localStorage.setItem("cookit_guest", "1");
-    localStorage.removeItem("cookit_user");
-    navigate("/");
+    navigate("/profile");
   };
 
   return (
     <div className="login-container">
       <h2 className="login-title">Login</h2>
+
       <form onSubmit={handleSubmit} className="login-form">
         <input
           className="login-input"
@@ -83,19 +88,29 @@ export default function Login() {
         </Button>
       </form>
 
-      <Button onClick={handleGuest} variant="ghost" size="large" className="btn--full-width guest-btn">
+      <Button
+        onClick={handleGuest}
+        variant="ghost"
+        size="large"
+        className="btn--full-width guest-btn"
+      >
         Entrar como invitado
       </Button>
 
       <div className="login-separator">o</div>
 
-      <Button onClick={handleGoogleLogin} variant="outline" size="large" className="btn--full-width google-btn">
+      <Button
+        onClick={handleGoogleLogin}
+        variant="outline"
+        size="large"
+        className="btn--full-width google-btn"
+      >
         <span className="google-icon-wrapper">
           <img
             src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
             alt="Google"
             className="google-icon"
-            onError={e => e.target.style.display='none'}
+            onError={(e) => (e.target.style.display = "none")}
           />
         </span>
         <span>Iniciar sesión con Google</span>
@@ -117,4 +132,3 @@ export default function Login() {
     </div>
   );
 }
-
