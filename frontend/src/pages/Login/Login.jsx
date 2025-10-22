@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import Button from "../../components/Button/Button";
@@ -11,10 +11,6 @@ export default function Login() {
   const [msg, setMsg] = useState("");
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
