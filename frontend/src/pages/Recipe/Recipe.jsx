@@ -12,6 +12,7 @@ export default function Recipe() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [recipe, setRecipe] = useState(null);
+    const [ingredients, setIngredients] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const { user, isAuthenticated } = useAuth();
@@ -28,17 +29,30 @@ export default function Recipe() {
         setLoading(true);
         setError("");
 
-        fetch(`${API_BASE}/recipes/${id}`)
-            .then(async (r) => {
-                if (!r.ok) {
-                    if (r.status === 404) {
+        Promise.all([
+            fetch(`${API_BASE}/recipes/${id}`),
+            fetch(`${API_BASE}/recipes/${id}/ingredients`)
+        ])
+            .then(async ([recipeRes, ingredientsRes]) => {
+                if (!recipeRes.ok) {
+                    if (recipeRes.status === 404) {
                         throw new Error("Receta no encontrada");
                     }
                     throw new Error("Error al cargar la receta");
                 }
-                const data = await r.json();
+                
+                if (!ingredientsRes.ok) {
+                    throw new Error("Error al cargar los ingredientes");
+                }
+
+                const [recipeData, ingredientsData] = await Promise.all([
+                    recipeRes.json(),
+                    ingredientsRes.json()
+                ]);
+
                 if (!cancelled) {
-                    setRecipe(data);
+                    setRecipe(recipeData);
+                    setIngredients(ingredientsData.ingredients || []);
                 }
             })
             .catch((e) => !cancelled && setError(e.message))
@@ -161,6 +175,19 @@ export default function Recipe() {
                         <span>Usuario ID: {recipe.user_id}</span>
                     </div>
                 </div>
+
+                {ingredients.length > 0 && (
+                    <div className="recipe-detail-section">
+                        <h3>Ingredientes</h3>
+                        <div className="recipe-detail-ingredients">
+                            {ingredients.map((ingredient, index) => (
+                                <div key={ingredient.id || index} className="recipe-ingredient">
+                                    <span className="ingredient-name">• {ingredient.name}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 {recipe.description && (
                     <div className="recipe-detail-section">
