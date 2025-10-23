@@ -70,14 +70,3 @@
   padding: 8px;
   border-radius: 8px;
 }
-
-.follow-btn {
-  background-color: #3498db;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  margin-left: 10px;
-}
