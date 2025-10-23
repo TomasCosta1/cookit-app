@@ -2,11 +2,6 @@
   margin-bottom: 20px;
 }
 
-.user-search form {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 10px;
-}
 
 .user-search input {
   flex: 1;
