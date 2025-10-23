@@ -1,0 +1,60 @@
+.user-search {
+  margin-bottom: 20px;
+}
+
+.user-search form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.user-search input {
+  flex: 1;
+  padding: 6px 10px;
+}
+
+.user-search button {
+  padding: 6px 12px;
+}
+
+.search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.user-card {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.user-card:hover {
+  background-color: #f0f0f0;
+}
+
+.user-avatar img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.user-info p {
+  margin: 0;
+}
+
+.user-email {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.no-results {
+  text-align: center;
+  color: #999;
+  margin-top: 20px;
+}
