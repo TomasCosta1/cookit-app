@@ -1,0 +1,74 @@
+.favorite-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    position: relative;
+    color: #6c757d;
+}
+
+.favorite-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    transform: scale(1.1);
+}
+
+.favorite-button:active {
+    transform: scale(0.95);
+}
+
+.favorite-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.favorite-button--active {
+    color: #ffc107;
+}
+
+.favorite-button--active:hover {
+    background-color: rgba(255, 193, 7, 0.1);
+}
+
+.favorite-icon {
+    width: 20px;
+    height: 20px;
+    transition: all 0.2s ease;
+}
+
+.favorite-button--small .favorite-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.favorite-button--large .favorite-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.favorite-button__loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12px;
+    color: #6c757d;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.favorite-button:not(.favorite-button--active):hover {
+    color: #ffc107;
+}
+
+.favorite-button--active:hover {
+    color: #e0a800;
+}

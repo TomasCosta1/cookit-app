@@ -45,6 +45,13 @@
     gap: 16px;
 }
 
+.recipe-detail-title-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+}
+
 .recipe-detail-title {
     margin: 0;
     color: #333;

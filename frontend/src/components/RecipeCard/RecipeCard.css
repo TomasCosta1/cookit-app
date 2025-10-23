@@ -19,13 +19,20 @@
     margin-bottom: 12px;
 }
 
+.recipe-title-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    margin-right: 12px;
+}
+
 .recipe-title {
     margin: 0;
     color: #333;
     font-size: 18px;
     font-weight: 600;
     flex: 1;
-    margin-right: 12px;
 }
 
 .recipe-difficulty {
