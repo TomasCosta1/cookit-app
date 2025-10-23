@@ -30,21 +30,6 @@
   background-color: #f0f0f0;
 }
 
-.user-avatar img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-}
-
-.user-info p {
-  margin: 0;
-}
-
-.user-email {
-  font-size: 0.8rem;
-  color: #666;
-}
-
 .no-results {
   text-align: center;
   color: #999;
