@@ -13,52 +13,41 @@ export default function ProfileView() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
 
+  const fetchUserData = async () => {
+    try {
+      // Usuario logueado
+      const currentUserRes = await fetch(`${API_BASE}/api/auth/profile`, { credentials: "include" });
+      if (!currentUserRes.ok) throw new Error("No se pudo obtener usuario actual");
+      const currentUserData = await currentUserRes.json();
+      setCurrentUser(currentUserData.user);
+
+      // Perfil que estamos viendo (incluye followers y following)
+      const res = await fetch(`${API_BASE}/api/users/${id}`, { credentials: "include" });
+      if (!res.ok) throw new Error("Usuario no encontrado");
+      const data = await res.json();
+
+      setUser(data.user);
+      setFollowers(data.followers || []);
+      setFollowing(data.following || []);
+
+      // Verificar si el usuario actual sigue este perfil
+      setIsFollowing((data.followers || []).some(f => f.id === currentUserData.user.id));
+    } catch (err) {
+      console.error("fetchUserData:", err);
+      alert(err.message);
+    }
+  };
+
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        // Obtener usuario logueado
-        const currentUserRes = await fetch(`${API_BASE}/api/auth/profile`, { credentials: "include" });
-        if (!currentUserRes.ok) throw new Error("No se pudo obtener usuario actual");
-        const currentUserData = await currentUserRes.json();
-        setCurrentUser(currentUserData.user);
-
-        // Obtener datos del perfil que estamos viendo
-        const res = await fetch(`${API_BASE}/api/users/${id}`, { credentials: "include" });
-        if (!res.ok) throw new Error("Usuario no encontrado");
-        const data = await res.json();
-        setUser(data.user);
-
-        // Obtener seguidores y siguiendo
-        const [followersRes, followingRes] = await Promise.all([
-          fetch(`${API_BASE}/api/users/${id}/followers`, { credentials: "include" }),
-          fetch(`${API_BASE}/api/users/${id}/following`, { credentials: "include" })
-        ]);
-
-        const followersData = followersRes.ok ? await followersRes.json() : { followers: [] };
-        const followingData = followingRes.ok ? await followingRes.json() : { following: [] };
-
-        setFollowers(followersData.followers || []);
-        setFollowing(followingData.following || []);
-
-        // Verificar si el usuario actual sigue este perfil
-        setIsFollowing(followersData.followers.some(f => f.id === currentUserData.user.id));
-      } catch (err) {
-        console.error("fetchUserData:", err);
-        alert(err.message);
-      }
-    };
-
     fetchUserData();
   }, [id]);
 
   const handleFollowToggle = async () => {
+    if (!currentUser) return;
+
     try {
-      if (!currentUser) throw new Error("No se pudo determinar el usuario actual");
-
       const endpoint = isFollowing ? "unfollow" : "follow";
-      const url = `${API_BASE}/api/${endpoint}`;
-
-      const res = await fetch(url, {
+      const res = await fetch(`${API_BASE}/api/${endpoint}`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -73,18 +62,17 @@ export default function ProfileView() {
         throw new Error(errorData.message || "Error al actualizar seguimiento");
       }
 
-      setIsFollowing(!isFollowing);
+      // Refrescar datos del perfil
+      await fetchUserData();
 
-      // Actualizar lista de seguidores del perfil que estamos viendo
-      const followersRes = await fetch(`${API_BASE}/api/users/${id}/followers`, { credentials: "include" });
-      if (followersRes.ok) {
-        const data = await followersRes.json();
-        setFollowers(data.followers || []);
-      }
     } catch (err) {
       console.error("handleFollowToggle:", err);
       alert(err.message);
     }
+  };
+
+  const handleNavigateToProfile = (userId) => {
+    navigate(`/profile/${userId}`);
   };
 
   if (!user || !currentUser) return <p className="loading">Cargando perfil...</p>;
@@ -105,17 +93,25 @@ export default function ProfileView() {
       <div className="friends-section">
         <h3>Seguidores ({followers.length})</h3>
         <ul>
-          {followers.length === 0 
-            ? <li>No tiene seguidores aún.</li> 
-            : followers.map(f => <li key={f.id}>{f.username}</li>)
+          {followers.length === 0
+            ? <li>No tiene seguidores aún.</li>
+            : followers.map(f => (
+                <li key={f.id} className="clickable" onClick={() => handleNavigateToProfile(f.id)}>
+                  {f.username}
+                </li>
+              ))
           }
         </ul>
 
         <h3>Siguiendo ({following.length})</h3>
         <ul>
-          {following.length === 0 
-            ? <li>No sigue a nadie aún.</li> 
-            : following.map(f => <li key={f.id}>{f.username}</li>)
+          {following.length === 0
+            ? <li>No sigue a nadie aún.</li>
+            : following.map(f => (
+                <li key={f.id} className="clickable" onClick={() => handleNavigateToProfile(f.id)}>
+                  {f.username}
+                </li>
+              ))
           }
         </ul>
       </div>
