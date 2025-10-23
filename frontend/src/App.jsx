@@ -9,7 +9,7 @@ import Recipes from './pages/RecipesList/RecipesList.jsx'
 import Recipe from './pages/Recipe/Recipe.jsx'
 import { Header } from './components/Header/Header.jsx'
 import Profile from "./pages/Profile/Profile.jsx";
-import ProfileView from "./pages/ProfileView/profileView.jsx";
+import ProfileView from "./pages/ProfileView/ProfileView.jsx";
 
 function App() {
   return (
