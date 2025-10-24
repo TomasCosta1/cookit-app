@@ -33,7 +33,6 @@ app.use(passport.session());
 // Rutas de autenticación
 const authRoutes = require("./src/routes/authRoutes");
 app.use("/api/auth", authRoutes);
-app.use(cors());
 
 app.get('/', (req, res) => {
   res.send('Cookit API is running');
