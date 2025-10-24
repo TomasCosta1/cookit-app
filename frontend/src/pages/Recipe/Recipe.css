@@ -150,14 +150,14 @@
     display: flex;
     flex-direction: column;
     align-items: start;
-    justify-content: left;
+    justify-content: flex-start;
     gap: 12px;
     margin-bottom: 0;
 }
 
 .recipe-ingredient {
     display: flex;
-    align-items: left;
+    align-items: flex-start;
     gap: 12px;
 }
 
