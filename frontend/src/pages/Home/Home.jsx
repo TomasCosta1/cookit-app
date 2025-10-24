@@ -3,50 +3,68 @@ import { useNavigate, useLocation } from "react-router-dom";
 import "./Home.css";
 import Button from "../../components/Button/Button";
 
+const API_BASE = import.meta.env.VITE_API_URL;
+
 export default function Home() {
   const [isGuest, setIsGuest] = useState(false);
   const [username, setUsername] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    const savedUser = localStorage.getItem("cookit_user");
-    if (savedUser) {
-      const userObj = JSON.parse(savedUser);
-      setUsername(userObj.name);
-      setIsGuest(false);
-      return;
-    }
+    const checkAuth = async () => {
+      try {
+        // Primero intentamos validar con el backend (sistema real)
+        const res = await fetch(`${API_BASE}/api/auth/profile`, { 
+          credentials: "include" 
+        });
+        
+        if (res.ok) {
+          const data = await res.json();
+          setUsername(data.user.username);
+          setIsGuest(false);
+          setLoading(false);
+          return;
+        }
+      } catch (err) {
+        console.error("Error al verificar autenticación:", err);
+      }
 
-    const params = new URLSearchParams(location.search);
-    const name = params.get("name");
-    if (name) {
-      setUsername(name);
-      localStorage.setItem("cookit_user", JSON.stringify({ name }));
-      localStorage.setItem("cookit_guest", "0");
-      setIsGuest(false);
-      return;
-    }
-
-    const guest = localStorage.getItem("cookit_guest");
-    if (!guest) {
-      localStorage.setItem("cookit_guest", "1");
+      // Si no hay sesión en el backend, marcamos como invitado
       setIsGuest(true);
-    } else {
-      setIsGuest(guest === "1");
-    }
+      setUsername(null);
+      setLoading(false);
+    };
+
+    checkAuth();
   }, [location]);
 
   const handleLoginRedirect = () => {
-    localStorage.removeItem("cookit_guest"); 
     navigate("/login");
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("cookit_user"); 
-    localStorage.removeItem("cookit_guest"); 
+  const handleLogout = async () => {
+    try {
+      await fetch(`${API_BASE}/api/auth/logout`, { 
+        method: "POST", 
+        credentials: "include" 
+      });
+    } catch (err) {
+      console.error("Error al cerrar sesión:", err);
+    }
+    setUsername(null);
+    setIsGuest(true);
     navigate("/login");
   };
+
+  if (loading) {
+    return (
+      <div className="home-container home-container-centered">
+        <p>Cargando...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="home-container home-container-centered">
