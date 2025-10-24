@@ -52,6 +52,55 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+router.get('/:id/ingredients', async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        if (isNaN(id)) {
+            return res.status(400).json({
+                success: false,
+                message: 'El ID debe ser un número válido'
+            });
+        }
+        
+        const [recipes] = await promisePool.execute(
+            'SELECT id FROM recipes WHERE id = ?',
+            [id]
+        );
+        
+        if (recipes.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Receta no encontrada'
+            });
+        }
+        
+        const query = `
+            SELECT i.id, i.name 
+            FROM recipe_ingredients ri 
+            INNER JOIN ingredients i ON ri.ingredient_id = i.id 
+            WHERE ri.recipe_id = ?
+            ORDER BY i.name ASC
+        `;
+        
+        const [ingredients] = await promisePool.execute(query, [id]);
+        
+        res.status(200).json({
+            success: true,
+            recipe_id: parseInt(id),
+            ingredients: ingredients,
+            total: ingredients.length
+        });
+    } catch (error) {
+        console.error('Error al obtener ingredientes de la receta:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor',
+            error: error.message
+        });
+    }
+});
+
 router.post('/', async (req, res) => {
     try {
         const { user_id, title, description, steps, cook_time, difficulty } = req.body;
