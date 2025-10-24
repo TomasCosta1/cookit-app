@@ -4,7 +4,7 @@ import './Header.css'
 import DinnerDiningIcon from '@mui/icons-material/DinnerDining';
 import PersonIcon from '@mui/icons-material/Person';
 import HomeIcon from '@mui/icons-material/Home';
-import FavoriteIcon from '@mui/icons-material/Favorite';
+import StarIcon from '@mui/icons-material/Star';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCarrot } from '@fortawesome/free-solid-svg-icons';
 
@@ -18,7 +18,7 @@ export const Header = () => {
         <NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''}><HomeIcon /></NavLink>
         <NavLink to="/ingredients" className={({ isActive }) => isActive ? 'active' : ''}><CarrotIcon /></NavLink>
         <NavLink to="/recipes" className={({ isActive }) => 'recipesIcon' + (isActive ? ' active' : '')}><DinnerDiningIcon /></NavLink>
-        <NavLink to="/favorites" className={({ isActive }) => isActive ? 'active' : ''}><FavoriteIcon /></NavLink>
+        <NavLink to="/favorites" className={({ isActive }) => isActive ? 'active' : ''}><StarIcon /></NavLink>
         <NavLink to="/profile" className={({ isActive }) => isActive ? 'active' : ''}><PersonIcon /></NavLink>
       </nav>
   )

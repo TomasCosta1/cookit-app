@@ -7,6 +7,7 @@ import Ingredients from './pages/Ingredients/Ingredients.jsx'
 import MyIngredients from './pages/MyIngredients/MyIngredients.jsx'
 import Recipes from './pages/RecipesList/RecipesList.jsx'
 import Recipe from './pages/Recipe/Recipe.jsx'
+import RecipeCreate from './pages/RecipeCreate/RecipeCreate.jsx'
 import Favorites from './pages/Favorites/Favorites.jsx'
 import { Header } from './components/Header/Header.jsx'
 import Profile from "./pages/Profile/Profile.jsx";
@@ -24,6 +25,7 @@ function App() {
         <Route path="/my-ingredients" element={<MyIngredients />} />
         <Route path='/recipes' element={<Recipes />} />
         <Route path='/recipe/:id' element={<Recipe />} />
+        <Route path='/recipes/create' element={<RecipeCreate />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/:id" element={<ProfileView />} />

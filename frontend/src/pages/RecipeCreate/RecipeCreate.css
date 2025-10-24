@@ -1,0 +1,184 @@
+/* Container */
+.recipe-create-page {
+	max-width: 640px;
+	margin: 40px auto;
+	padding: 0 16px;
+}
+
+.recipe-create-page h1 {
+	color: #222;
+	font-weight: 700;
+	font-size: 28px;
+	margin-bottom: 18px;
+	text-align: center;
+}
+
+/* Card-like form */
+.recipe-create-page form {
+	background: #fff;
+	border-radius: 18px;
+	box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+	padding: 20px;
+}
+
+/* Labels and fields */
+.recipe-create-page label {
+	display: block;
+	font-weight: 600;
+	color: #333;
+	margin: 12px 0 6px;
+}
+
+.recipe-create-page input[type="text"],
+.recipe-create-page input[type="number"],
+.recipe-create-page input[type="file"],
+.recipe-create-page textarea,
+.recipe-create-page select {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 10px 12px;
+	border: 1px solid #e5e7eb;
+	border-radius: 10px;
+	font-size: 14px;
+	background: #fafafa;
+	color: #222;
+}
+
+.recipe-create-page textarea {
+	resize: vertical;
+}
+
+.recipe-create-page input:focus,
+.recipe-create-page textarea:focus,
+.recipe-create-page select:focus {
+	outline: none;
+	border-color: #fcba03;
+	box-shadow: 0 0 0 3px rgba(252,186,3,0.15);
+	background: #fff;
+}
+
+/* Sections */
+.recipe-create-page section {
+	margin-top: 18px;
+	background: #fff;
+	border: 1px dashed #eee;
+	border-radius: 14px;
+	padding: 12px;
+}
+
+.recipe-create-page section h2 {
+	margin: 0 0 10px;
+	font-size: 18px;
+	color: #222;
+}
+
+/* Rows inside sections (ingredients/steps) */
+.recipe-create-page section > div {
+	display: flex;
+	gap: 8px;
+	align-items: flex-start;
+}
+
+.recipe-create-page section > div + div {
+	margin-top: 8px;
+}
+
+.recipe-create-page section textarea {
+	min-height: 44px;
+}
+
+/* Buttons base (match app Button styles closely) */
+.recipe-create-page button {
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	font-weight: 500;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.2s ease;
+	white-space: nowrap;
+	padding: 10px 16px;
+	font-size: 14px;
+}
+
+.recipe-create-page button:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 2px;
+}
+
+/* Danger buttons for row deletes (Eliminar) */
+.recipe-create-page section button[type="button"] {
+	background-color: #dc3545;
+	color: #fff;
+}
+
+.recipe-create-page section button[type="button"]:hover {
+	background-color: #c82333;
+	transform: translateY(-1px);
+}
+
+/* Add buttons inside sections */
+.recipe-create-page section > button[type="button"] {
+	margin-top: 8px;
+	background-color: #fcba03;
+	color: #fff;
+}
+
+.recipe-create-page section > button[type="button"]:hover {
+	background-color: #e0a800;
+	transform: translateY(-1px);
+}
+
+/* Actions row (submit + clear) */
+.recipe-create-page form > div:last-of-type {
+	display: flex;
+	gap: 8px;
+	margin-top: 16px;
+}
+
+.recipe-create-page form > div:last-of-type button[type="submit"] {
+	background-color: #fcba03;
+	color: #fff;
+	flex: 1;
+}
+
+.recipe-create-page form > div:last-of-type button[type="submit"]:hover {
+	background-color: #e0a800;
+	transform: translateY(-1px);
+}
+
+.recipe-create-page form > div:last-of-type button[type="button"] {
+	background-color: transparent;
+	border: 1px solid #fcba03;
+	color: #fcba03;
+}
+
+.recipe-create-page form > div:last-of-type button[type="button"]:hover {
+	background-color: #fcba03;
+	color: #fff;
+}
+
+/* File input small tweak */
+.recipe-create-page input[type="file"] {
+	padding: 8px;
+	background: #fff;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+	.recipe-create-page {
+		max-width: calc(100vw - 32px);
+		margin: 20px 16px;
+	}
+
+	.recipe-create-page h1 {
+		font-size: 24px;
+	}
+
+	.recipe-create-page form {
+		border-radius: 12px;
+		padding: 16px;
+	}
+}
+
