@@ -1,21 +1,38 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"; 
 import { useNavigate } from "react-router-dom";
 import "./Profile.css";
+import UserSearch from "../../components/UserSearch/UserSerch.jsx";
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
 export default function Profile() {
   const [user, setUser] = useState(null);
   const [isGuest, setIsGuest] = useState(false);
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
   const navigate = useNavigate();
+
+  const fetchFollowData = async (userId) => {
+    try {
+      const [followersRes, followingRes] = await Promise.all([
+        fetch(`${API_BASE}/api/users/${userId}/followers`, { credentials: "include" }),
+        fetch(`${API_BASE}/api/users/${userId}/following`, { credentials: "include" })
+      ]);
+
+      const followersData = followersRes.ok ? await followersRes.json() : { followers: [] };
+      const followingData = followingRes.ok ? await followingRes.json() : { following: [] };
+
+      setFollowers(followersData.followers || []);
+      setFollowing(followingData.following || []);
+    } catch (err) {
+      console.error("Error al cargar seguidores/siguiendo:", err);
+    }
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch(`${API_BASE}/api/auth/profile`, {
-          credentials: "include",
-        });
-
+        const res = await fetch(`${API_BASE}/api/auth/profile`, { credentials: "include" });
         if (!res.ok) {
           setIsGuest(true);
           return;
@@ -23,21 +40,25 @@ export default function Profile() {
 
         const data = await res.json();
         setUser(data.user);
+        await fetchFollowData(data.user.id);
+
       } catch (err) {
-        console.error(err);
+        console.error("Error al cargar perfil:", err);
         setIsGuest(true);
       }
     };
+
     fetchProfile();
   }, []);
 
   const handleLogout = async () => {
-    await fetch(`${API_BASE}/api/auth/logout`, {
-      method: "POST",
-      credentials: "include",
-    });
+    await fetch(`${API_BASE}/api/auth/logout`, { method: "POST", credentials: "include" });
     setUser(null);
     setIsGuest(true);
+  };
+
+  const handleNavigateToProfile = (id) => {
+    navigate(`/profile/${id}`);
   };
 
   if (!user && !isGuest) return <p className="loading">Cargando perfil...</p>;
@@ -58,13 +79,41 @@ export default function Profile() {
     <div className="profile-container">
       <h2>Mi Perfil</h2>
       <div className="profile-card">
-        <p>
-          <strong>Nombre:</strong> {user.username}
-        </p>
-        <p>
-          <strong>Email:</strong> {user.email}
-        </p>
+        <p><strong>Nombre:</strong> {user.username}</p>
+        <p><strong>Email:</strong> {user.email}</p>
       </div>
+
+      {/* Buscador de usuarios */}
+      <UserSearch />
+
+      <div className="friends-section">
+        <h3>Seguidores ({followers.length})</h3>
+        <ul>
+          {followers.length === 0 ? (
+            <li>No tienes seguidores aún.</li>
+          ) : (
+            followers.map(f => (
+              <li key={f.id} className="clickable" onClick={() => handleNavigateToProfile(f.id)}>
+                {f.username}
+              </li>
+            ))
+          )}
+        </ul>
+
+        <h3>Siguiendo ({following.length})</h3>
+        <ul>
+          {following.length === 0 ? (
+            <li>No sigues a nadie aún.</li>
+          ) : (
+            following.map(f => (
+              <li key={f.id} className="clickable" onClick={() => handleNavigateToProfile(f.id)}>
+                {f.username}
+              </li>
+            ))
+          )}
+        </ul>
+      </div>
+
       <button onClick={handleLogout} className="logout-btn">
         Cerrar sesión
       </button>

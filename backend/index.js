@@ -38,6 +38,8 @@ app.get('/', (req, res) => {
   res.send('Cookit API is running');
 });
 
+app.use("/api", require("./src/routes/userRoutes"));
+app.use("/api", require("./src/routes/followRoutes"));
 app.use('/ingredients', require('./src/routes/ingredients'));
 app.use('/recipes', require('./src/routes/recipes'));
 app.use('/favorites', require('./src/routes/favorites'));

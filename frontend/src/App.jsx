@@ -11,6 +11,7 @@ import RecipeCreate from './pages/RecipeCreate/RecipeCreate.jsx'
 import Favorites from './pages/Favorites/Favorites.jsx'
 import { Header } from './components/Header/Header.jsx'
 import Profile from "./pages/Profile/Profile.jsx";
+import ProfileView from "./pages/ProfileView/ProfileView.jsx";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path='/recipes/create' element={<RecipeCreate />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/profile/:id" element={<ProfileView />} />
       </Routes>
     </BrowserRouter>
   );
