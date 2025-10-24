@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Profile.css";
 import Modal from "../../components/Modal/Modal.jsx";
-import UserSearch from "../../components/UserSearch/UserSerch.jsx";
+import UserSearch from "../../components/UserSearch/UserSearch.jsx";
 import RecipeCardCompact from "../../components/RecipeCardCompact/RecipeCardCompact.jsx";
 
 const API_BASE = import.meta.env.VITE_API_URL;
