@@ -77,41 +77,76 @@ export default function Profile() {
 
   return (
     <div className="profile-container">
-      <h2>Mi Perfil</h2>
-      <div className="profile-card">
-        <p><strong>Nombre:</strong> {user.username}</p>
-        <p><strong>Email:</strong> {user.email}</p>
+      <div className="profile-header">
+        <div className="profile-image-container">
+          <img 
+            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.username)}&size=150&background=fcba03&color=1a1a1a&bold=true`}
+            alt={user.username}
+            className="profile-image"
+          />
+        </div>
+        <div className="profile-info">
+          <h2 className="profile-username">{user.username}</h2>
+          <p className="profile-email">{user.email}</p>
+          <div className="profile-stats">
+            <div className="stat-item">
+              <span className="stat-number">{followers.length}</span>
+              <span className="stat-label">Seguidores</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-number">{following.length}</span>
+              <span className="stat-label">Siguiendo</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Buscador de usuarios */}
-      <UserSearch />
+      <div className="search-section">
+        <h3>Buscar usuarios</h3>
+        <UserSearch />
+      </div>
 
       <div className="friends-section">
-        <h3>Seguidores ({followers.length})</h3>
-        <ul>
-          {followers.length === 0 ? (
-            <li>No tienes seguidores aún.</li>
-          ) : (
-            followers.map(f => (
-              <li key={f.id} className="clickable" onClick={() => handleNavigateToProfile(f.id)}>
-                {f.username}
-              </li>
-            ))
-          )}
-        </ul>
+        <div className="friends-list">
+          <h3>Seguidores ({followers.length})</h3>
+          <div className="users-grid">
+            {followers.length === 0 ? (
+              <p className="empty-message">No tienes seguidores aún.</p>
+            ) : (
+              followers.map(f => (
+                <div key={f.id} className="user-item" onClick={() => handleNavigateToProfile(f.id)}>
+                  <img 
+                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(f.username)}&size=50&background=fef3c7&color=1a1a1a`}
+                    alt={f.username}
+                    className="user-avatar"
+                  />
+                  <span className="user-name">{f.username}</span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
 
-        <h3>Siguiendo ({following.length})</h3>
-        <ul>
-          {following.length === 0 ? (
-            <li>No sigues a nadie aún.</li>
-          ) : (
-            following.map(f => (
-              <li key={f.id} className="clickable" onClick={() => handleNavigateToProfile(f.id)}>
-                {f.username}
-              </li>
-            ))
-          )}
-        </ul>
+        <div className="friends-list">
+          <h3>Siguiendo ({following.length})</h3>
+          <div className="users-grid">
+            {following.length === 0 ? (
+              <p className="empty-message">No sigues a nadie aún.</p>
+            ) : (
+              following.map(f => (
+                <div key={f.id} className="user-item" onClick={() => handleNavigateToProfile(f.id)}>
+                  <img 
+                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(f.username)}&size=50&background=fef3c7&color=1a1a1a`}
+                    alt={f.username}
+                    className="user-avatar"
+                  />
+                  <span className="user-name">{f.username}</span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
       </div>
 
       <button onClick={handleLogout} className="logout-btn">
