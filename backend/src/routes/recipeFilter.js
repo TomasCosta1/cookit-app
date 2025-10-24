@@ -196,45 +196,5 @@ router.get('/debug-user-ingredients', async (req, res) => {
     }
 });
 
-router.get('/test-ceviche', async (req, res) => {
-    try {
-       
-        const cevicheIngredients = [86, 65, 28, 36, 111, 78];
-        const placeholders = cevicheIngredients.map(() => '?').join(',');
-        
-        const query = `
-            SELECT 
-                r.*,
-                COUNT(ri.ingredient_id) as matching_ingredients,
-                GROUP_CONCAT(ri.ingredient_id) as matched_ingredient_ids,
-                GROUP_CONCAT(i.name) as matched_ingredient_names
-            FROM recipes r
-            INNER JOIN recipe_ingredients ri ON r.id = ri.recipe_id
-            INNER JOIN ingredients i ON ri.ingredient_id = i.id
-            WHERE ri.ingredient_id IN (${placeholders})
-            GROUP BY r.id
-            HAVING matching_ingredients > 0
-            ORDER BY matching_ingredients DESC, r.created_at DESC
-        `;
-        
-        console.log('Probando con ingredientes del ceviche:', cevicheIngredients);
-        const [recipes] = await promisePool.execute(query, cevicheIngredients);
-        
-        res.json({
-            success: true,
-            recipes: recipes,
-            total: recipes.length,
-            ingredients_used: cevicheIngredients
-        });
-        
-    } catch (error) {
-        console.error('Error en test-ceviche:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error interno del servidor',
-            error: error.message
-        });
-    }
-});
 
 module.exports = router;
