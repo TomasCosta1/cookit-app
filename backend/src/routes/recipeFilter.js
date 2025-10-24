@@ -154,47 +154,5 @@ router.get('/stats/:userId', async (req, res) => {
     }
 });
 
-router.get('/debug-user-ingredients', async (req, res) => {
-    try {
-        const { userIngredients } = req.query;
-        
-        if (!userIngredients) {
-            return res.status(400).json({
-                success: false,
-                message: 'Se requieren los ingredientes del usuario'
-            });
-        }
-
-        let ingredientIds;
-        try {
-            ingredientIds = JSON.parse(userIngredients);
-        } catch (error) {
-            return res.status(400).json({
-                success: false,
-                message: 'Formato de ingredientes inválido'
-            });
-        }
-
-        const placeholders = ingredientIds.map(() => '?').join(',');
-        const query = `SELECT id, name FROM ingredients WHERE id IN (${placeholders})`;
-        const [ingredients] = await promisePool.execute(query, ingredientIds);
-        
-        res.json({
-            success: true,
-            user_ingredient_ids: ingredientIds,
-            found_ingredients: ingredients,
-            total_found: ingredients.length
-        });
-        
-    } catch (error) {
-        console.error('Error en debug-user-ingredients:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error interno del servidor',
-            error: error.message
-        });
-    }
-});
-
 
 module.exports = router;
