@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
@@ -53,7 +53,7 @@ export const useRecipeFilter = (userIngredients = []) => {
         }
     };
 
-    const getStats = async () => {
+    const getStats = useCallback(async () => {
         if (!userIngredients || userIngredients.length === 0) return;
 
         try {
@@ -73,14 +73,14 @@ export const useRecipeFilter = (userIngredients = []) => {
         } catch (err) {
             console.error('Error al obtener estadísticas:', err);
         }
-    };
+    }, [userIngredients]);
 
-    const clearFilter = () => {
+    const clearFilter = useCallback(() => {
         setFilteredRecipes([]);
         setStats(null);
         setIsFiltered(false);
         setError(null);
-    };
+    }, []);
 
     const hasIngredients = userIngredients && userIngredients.length > 0;
 
@@ -90,7 +90,7 @@ export const useRecipeFilter = (userIngredients = []) => {
         } else {
             clearFilter();
         }
-    }, [userIngredients]);
+    }, [hasIngredients, getStats, clearFilter]);
 
     return {
         filteredRecipes,
