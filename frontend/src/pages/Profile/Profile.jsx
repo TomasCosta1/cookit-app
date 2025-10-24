@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"; 
 import { useNavigate } from "react-router-dom";
 import "./Profile.css";
-import UserSearch from "../../components/UserSearch/userSerch.jsx";
+import UserSearch from "../../components/UserSearch/UserSerch.jsx";
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
