@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"; 
 import { useNavigate } from "react-router-dom";
 import "./Profile.css";
+import Modal from "../../components/Modal/Modal.jsx";
 import UserSearch from "../../components/UserSearch/UserSerch.jsx";
 
 const API_BASE = import.meta.env.VITE_API_URL;
@@ -10,6 +11,8 @@ export default function Profile() {
   const [isGuest, setIsGuest] = useState(false);
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
+  const [showFollowersModal, setShowFollowersModal] = useState(false);
+  const [showFollowingModal, setShowFollowingModal] = useState(false);
   const navigate = useNavigate();
 
   const fetchFollowData = async (userId) => {
@@ -89,11 +92,11 @@ export default function Profile() {
           <h2 className="profile-username">{user.username}</h2>
           <p className="profile-email">{user.email}</p>
           <div className="profile-stats">
-            <div className="stat-item">
+            <div className="stat-item" onClick={() => setShowFollowersModal(true)}>
               <span className="stat-number">{followers.length}</span>
               <span className="stat-label">Seguidores</span>
             </div>
-            <div className="stat-item">
+            <div className="stat-item" onClick={() => setShowFollowingModal(true)}>
               <span className="stat-number">{following.length}</span>
               <span className="stat-label">Siguiendo</span>
             </div>
@@ -107,47 +110,67 @@ export default function Profile() {
         <UserSearch />
       </div>
 
-      <div className="friends-section">
-        <div className="friends-list">
-          <h3>Seguidores ({followers.length})</h3>
-          <div className="users-grid">
-            {followers.length === 0 ? (
-              <p className="empty-message">No tienes seguidores aún.</p>
-            ) : (
-              followers.map(f => (
-                <div key={f.id} className="user-item" onClick={() => handleNavigateToProfile(f.id)}>
-                  <img 
-                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(f.username)}&size=50&background=fef3c7&color=1a1a1a`}
-                    alt={f.username}
-                    className="user-avatar"
-                  />
-                  <span className="user-name">{f.username}</span>
-                </div>
-              ))
-            )}
+      {/* Modal de Seguidores */}
+      <Modal
+        open={showFollowersModal}
+        title={`Seguidores (${followers.length})`}
+        onClose={() => setShowFollowersModal(false)}
+      >
+        {followers.length === 0 ? (
+          <p className="empty-message">No tienes seguidores aún.</p>
+        ) : (
+          <div className="users-list">
+            {followers.map(f => (
+              <div
+                key={f.id}
+                className="user-item"
+                onClick={() => {
+                  handleNavigateToProfile(f.id);
+                  setShowFollowersModal(false);
+                }}
+              >
+                <img
+                  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(f.username)}&size=50&background=fef3c7&color=1a1a1a`}
+                  alt={f.username}
+                  className="user-avatar"
+                />
+                <span className="user-name">{f.username}</span>
+              </div>
+            ))}
           </div>
-        </div>
+        )}
+      </Modal>
 
-        <div className="friends-list">
-          <h3>Siguiendo ({following.length})</h3>
-          <div className="users-grid">
-            {following.length === 0 ? (
-              <p className="empty-message">No sigues a nadie aún.</p>
-            ) : (
-              following.map(f => (
-                <div key={f.id} className="user-item" onClick={() => handleNavigateToProfile(f.id)}>
-                  <img 
-                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(f.username)}&size=50&background=fef3c7&color=1a1a1a`}
-                    alt={f.username}
-                    className="user-avatar"
-                  />
-                  <span className="user-name">{f.username}</span>
-                </div>
-              ))
-            )}
+      {/* Modal de Siguiendo */}
+      <Modal
+        open={showFollowingModal}
+        title={`Siguiendo (${following.length})`}
+        onClose={() => setShowFollowingModal(false)}
+      >
+        {following.length === 0 ? (
+          <p className="empty-message">No sigues a nadie aún.</p>
+        ) : (
+          <div className="users-list">
+            {following.map(f => (
+              <div
+                key={f.id}
+                className="user-item"
+                onClick={() => {
+                  handleNavigateToProfile(f.id);
+                  setShowFollowingModal(false);
+                }}
+              >
+                <img
+                  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(f.username)}&size=50&background=fef3c7&color=1a1a1a`}
+                  alt={f.username}
+                  className="user-avatar"
+                />
+                <span className="user-name">{f.username}</span>
+              </div>
+            ))}
           </div>
-        </div>
-      </div>
+        )}
+      </Modal>
 
       <button onClick={handleLogout} className="logout-btn">
         Cerrar sesión

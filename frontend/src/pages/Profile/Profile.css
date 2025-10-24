@@ -69,12 +69,17 @@
   background: linear-gradient(135deg, #fcba03 0%, #f59e0b 100%);
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(252, 186, 3, 0.3);
-  transition: transform 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
 }
 
 .stat-item:hover {
   transform: translateY(-3px);
   box-shadow: 0 6px 16px rgba(252, 186, 3, 0.4);
+}
+
+.stat-item:active {
+  transform: translateY(-1px);
 }
 
 .stat-number {
@@ -108,12 +113,15 @@
   color: #2c3e50;
 }
 
-/* Friends Section */
+.users-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Friends Section - Removed */
 .friends-section {
-  margin-top: 30px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 25px;
+  display: none;
 }
 
 .friends-list {
@@ -273,4 +281,6 @@
   .friends-section {
     grid-template-columns: 1fr;
   }
+
+  
 }
