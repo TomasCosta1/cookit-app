@@ -19,13 +19,20 @@
     margin-bottom: 12px;
 }
 
+.recipe-title-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    margin-right: 12px;
+}
+
 .recipe-title {
     margin: 0;
     color: #333;
     font-size: 18px;
     font-weight: 600;
     flex: 1;
-    margin-right: 12px;
 }
 
 .recipe-difficulty {
@@ -71,6 +78,50 @@
     margin: 0;
     color: #555;
     line-height: 1.4;
+}
+
+.recipe-filter-info {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+    border-radius: 8px;
+    border: 1px solid #e1bee7;
+}
+
+.ingredient-match {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.match-percentage {
+    font-weight: 600;
+    color: #1976d2;
+    font-size: 14px;
+}
+
+.match-count {
+    color: #777;
+    display: flex;
+}
+
+.match-symbols {
+    display: flex;
+}
+
+.missing-count {
+    color: #d32f2f;
+    font-size: 13px;
+}
+
+@media (max-width: 768px) {
+    .ingredient-match {
+        gap: 4px;
+    }
+    
+    .match-count{
+        font-size: 14px;
+    }
 }
 
 @media (max-width: 768px) {
