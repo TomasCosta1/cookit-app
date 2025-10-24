@@ -157,7 +157,7 @@
 
 .recipe-ingredient {
     display: flex;
-    align-items: left;
+    align-items: flex-start;
     gap: 12px;
 }
 
