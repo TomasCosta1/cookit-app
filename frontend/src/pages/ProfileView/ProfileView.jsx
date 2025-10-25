@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Modal from "../../components/Modal/Modal.jsx";
+import RecipeCardCompact from "../../components/RecipeCardCompact/RecipeCardCompact.jsx";
 import "./ProfileView.css";
 
 const API_BASE = import.meta.env.VITE_API_URL;
@@ -16,6 +17,7 @@ export default function ProfileView() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [showFollowersModal, setShowFollowersModal] = useState(false);
   const [showFollowingModal, setShowFollowingModal] = useState(false);
+  const [yourRecipes, setYourRecipes] = useState([]);
 
   const fetchUserData = async () => {
     try {
@@ -37,8 +39,21 @@ export default function ProfileView() {
     }
   };
 
+    const fetchYourRecipes = async (userId) => {
+    try {
+      const res = await fetch(`${API_BASE}/recipes`, { credentials: "include" });
+      if (!res.ok) return;
+      const data = await res.json();
+      const mine = Array.isArray(data) ? data.filter(r => Number(r.user_id) === Number(userId)) : [];
+      setYourRecipes(mine);
+    } catch (err) {
+      console.error("Error al cargar mis recetas:", err);
+    }
+  };
+
   useEffect(() => {
     fetchUserData();
+    fetchYourRecipes(user.id);
   }, [id]);
 
   const handleFollowToggle = async () => {
@@ -113,6 +128,19 @@ export default function ProfileView() {
             </button>
           )}
         </div>
+      </div>
+
+      {/* Mis recetas */}
+      <div className="my-recipes-section">
+        <h3>Mis recetas ({yourRecipes.length})</h3>
+        <div className="my-recipes-grid">
+          {yourRecipes.map(recipe => (
+            <RecipeCardCompact key={recipe.id} recipe={recipe} />
+          ))}
+        </div>
+        {yourRecipes.length === 0 && (
+          <p className="empty-message">Todavía no tienes recetas creadas.</p>
+        )}
       </div>
 
       {/* Modales */}
