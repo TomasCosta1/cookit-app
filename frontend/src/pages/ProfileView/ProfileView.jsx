@@ -34,12 +34,14 @@ export default function ProfileView() {
       setFollowers(data.followers || []);
       setFollowing(data.following || []);
       setIsFollowing((data.followers || []).some(f => f.id === currentUserData.user.id));
+      
+      await fetchYourRecipes(data.user.id);
     } catch (err) {
       console.error("fetchUserData:", err);
     }
   };
 
-    const fetchYourRecipes = async (userId) => {
+  const fetchYourRecipes = async (userId) => {
     try {
       const res = await fetch(`${API_BASE}/recipes`, { credentials: "include" });
       if (!res.ok) return;
@@ -53,7 +55,6 @@ export default function ProfileView() {
 
   useEffect(() => {
     fetchUserData();
-    fetchYourRecipes(user.id);
   }, [id]);
 
   const handleFollowToggle = async () => {
