@@ -40,8 +40,7 @@
     justify-content: center;
     align-items: center;
     gap: 16px;
-    margin: 24px 0;
-    padding: 16px;
+    margin: 20px 0;
 }
 
 .page-info {
@@ -94,12 +93,6 @@
     .favorites-list {
         grid-template-columns: 1fr;
         gap: 16px;
-    }
-    
-    .favorites-pager {
-        flex-direction: column;
-        gap: 12px;
-        padding: 12px;
     }
     
     .page-info {
