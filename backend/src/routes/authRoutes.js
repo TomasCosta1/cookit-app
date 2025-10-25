@@ -32,7 +32,7 @@ router.get('/google/callback',
       process.env.JWT_SECRET || 'cookit_secret',
       { expiresIn: '1h' }
     );
-    // Enviar cookie
+    
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
