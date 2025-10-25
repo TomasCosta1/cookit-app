@@ -52,15 +52,74 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
+router.get('/:id/ingredients', async (req, res) => {
     try {
-        const { user_id, title, description, steps, cook_time, difficulty } = req.body;
+        const { id } = req.params;
         
-        if (!user_id || !title) {
+        if (isNaN(id)) {
             return res.status(400).json({
                 success: false,
-                message: 'user_id y title son campos obligatorios'
+                message: 'El ID debe ser un número válido'
             });
+        }
+        
+        const [recipes] = await promisePool.execute(
+            'SELECT id FROM recipes WHERE id = ?',
+            [id]
+        );
+        
+        if (recipes.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Receta no encontrada'
+            });
+        }
+        
+        const query = `
+            SELECT i.id, i.name 
+            FROM recipe_ingredients ri 
+            INNER JOIN ingredients i ON ri.ingredient_id = i.id 
+            WHERE ri.recipe_id = ?
+            ORDER BY i.name ASC
+        `;
+        
+        const [ingredients] = await promisePool.execute(query, [id]);
+        
+        res.status(200).json({
+            success: true,
+            recipe_id: parseInt(id),
+            ingredients: ingredients,
+            total: ingredients.length
+        });
+    } catch (error) {
+        console.error('Error al obtener ingredientes de la receta:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor',
+            error: error.message
+        });
+    }
+});
+
+router.post('/', async (req, res) => {
+    try {
+        const { user_id, title, description, steps, cook_time, difficulty, ingredient_ids } = req.body;
+        
+        // Validaciones obligatorias
+        if (!user_id) {
+            return res.status(400).json({ success: false, message: 'user_id es obligatorio' });
+        }
+        if (!title || String(title).trim() === '') {
+            return res.status(400).json({ success: false, message: 'title es obligatorio' });
+        }
+        if (!description || String(description).trim() === '') {
+            return res.status(400).json({ success: false, message: 'description es obligatorio' });
+        }
+        if (!steps || String(steps).trim() === '') {
+            return res.status(400).json({ success: false, message: 'steps es obligatorio' });
+        }
+        if (!Array.isArray(ingredient_ids) || ingredient_ids.length === 0) {
+            return res.status(400).json({ success: false, message: 'ingredients es obligatorio (ingredient_ids debe contener al menos 1 id)' });
         }
         
         const validDifficulties = ['easy', 'medium', 'hard'];
@@ -78,26 +137,56 @@ router.post('/', async (req, res) => {
             });
         }
         
-        const query = `
-            INSERT INTO recipes (user_id, title, description, steps, cook_time, difficulty)
-            VALUES (?, ?, ?, ?, ?, ?)
-        `;
-        
-        const [result] = await promisePool.execute(query, [
-            user_id,
-            title,
-            description || null,
-            steps || null,
-            cook_time || null,
-            difficulty || 'easy'
-        ]);
-        
-        const [newRecipe] = await promisePool.execute(
-            'SELECT * FROM recipes WHERE id = ?',
-            [result.insertId]
-        );
+        // Transacción: crear receta y asociar ingredientes
+        const conn = await promisePool.getConnection();
+        try {
+            await conn.beginTransaction();
 
-        res.status(201).json(newRecipe[0]);
+            const insertSql = `
+                INSERT INTO recipes (user_id, title, description, steps, cook_time, difficulty)
+                VALUES (?, ?, ?, ?, ?, ?)
+            `;
+            const [result] = await conn.execute(insertSql, [
+                user_id,
+                String(title).trim(),
+                String(description).trim(),
+                String(steps).trim(),
+                cook_time || null,
+                difficulty || 'easy'
+            ]);
+
+            const recipeId = result.insertId;
+
+            // Normalizar IDs de ingredientes
+            const ids = [...new Set(ingredient_ids
+                .map((v) => parseInt(v, 10))
+                .filter((n) => Number.isFinite(n) && n > 0))];
+
+            if (ids.length === 0) {
+                throw new Error('ingredient_ids inválidos');
+            }
+
+            const placeholders = ids.map(() => '(?, ?)').join(', ');
+            const params = ids.flatMap((ingId) => [recipeId, ingId]);
+            await conn.execute(
+                `INSERT INTO recipe_ingredients (recipe_id, ingredient_id) VALUES ${placeholders}`,
+                params
+            );
+
+            await conn.commit();
+
+            const [newRecipe] = await promisePool.execute(
+                'SELECT * FROM recipes WHERE id = ?',
+                [recipeId]
+            );
+
+            res.status(201).json(newRecipe[0]);
+        } catch (txErr) {
+            try { await conn.rollback(); } catch (_) {}
+            throw txErr;
+        } finally {
+            conn.release();
+        }
     } catch (error) {
         console.error('Error al crear receta:', error);
         

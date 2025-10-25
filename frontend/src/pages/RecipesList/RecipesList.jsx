@@ -3,6 +3,7 @@ import "./RecipesList.css";
 import RecipeCard from "../../components/RecipeCard/RecipeCard";
 import SearchInput from "../../components/SearchInput/SearchInput";
 import Button from "../../components/Button/Button";
+import RecipeFilter from "../../components/RecipeFilter/RecipeFilter";
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
@@ -15,6 +16,8 @@ export default function RecipesList() {
     const [rows, setRows] = useState([]);
     const [total, setTotal] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
+    const [filteredRecipes, setFilteredRecipes] = useState([]);
+    const [isFiltered, setIsFiltered] = useState(false);
 
     const url = useMemo(() => {
         const params = new URLSearchParams();
@@ -45,14 +48,14 @@ export default function RecipesList() {
         };
     }, [url, limit]);
 
-    // Filtro local por búsqueda
     const filteredRows = useMemo(() => {
-        if (!q) return rows;
-        return rows.filter(recipe => 
+        const sourceRecipes = isFiltered ? filteredRecipes : rows;
+        if (!q) return sourceRecipes;
+        return sourceRecipes.filter(recipe => 
             recipe.title?.toLowerCase().includes(q.toLowerCase()) ||
             recipe.description?.toLowerCase().includes(q.toLowerCase())
         );
-    }, [rows, q]);
+    }, [rows, filteredRecipes, isFiltered, q]);
 
     // Paginación
     const paginatedRows = useMemo(() => {
@@ -61,7 +64,6 @@ export default function RecipesList() {
         return filteredRows.slice(startIndex, endIndex);
     }, [filteredRows, page, limit]);
 
-    // TotalPages basado en resultados filtrados
     useEffect(() => {
         const newTotalPages = Math.max(1, Math.ceil(filteredRows.length / limit));
         setTotalPages(newTotalPages);
@@ -71,9 +73,27 @@ export default function RecipesList() {
         }
     }, [filteredRows.length, limit, page]);
 
+    const handleFilteredRecipes = (recipes) => {
+        setFilteredRecipes(recipes);
+        setIsFiltered(true);
+        setPage(1);
+    };
+
+    const handleClearFilter = () => {
+        setFilteredRecipes([]);
+        setIsFiltered(false);
+        setPage(1);
+    };
+
     return (
         <div className="recipes-page">
             <h2>Recetas</h2>
+            
+            <RecipeFilter
+                onFilteredRecipes={handleFilteredRecipes}
+                onClearFilter={handleClearFilter}
+                isFiltered={isFiltered}
+            />
             
             <SearchInput
                 value={q}
@@ -115,6 +135,9 @@ export default function RecipesList() {
                 <div className="no-results">
                     <p>No se encontraron recetas</p>
                     {q && <p>Intenta con otros términos de búsqueda</p>}
+                    {isFiltered && (
+                        <p>No hay recetas que coincidan con tus ingredientes</p>
+                    )}
                 </div>
             )}
         </div>

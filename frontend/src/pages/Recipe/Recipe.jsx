@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./Recipe.css";
 import Button from "../../components/Button/Button";
+import FavoriteButton from "../../components/FavoriteButton/FavoriteButton";
+import { useAuth } from "../../hooks/useAuth";
+import { useFavorites } from "../../hooks/useFavorites";
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
@@ -9,8 +12,11 @@ export default function Recipe() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [recipe, setRecipe] = useState(null);
+    const [ingredients, setIngredients] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const { user, isAuthenticated } = useAuth();
+    const { isFavorite, toggleFavorite } = useFavorites(user?.id);
 
     useEffect(() => {
         if (!id || isNaN(id)) {
@@ -23,17 +29,30 @@ export default function Recipe() {
         setLoading(true);
         setError("");
 
-        fetch(`${API_BASE}/recipes/${id}`)
-            .then(async (r) => {
-                if (!r.ok) {
-                    if (r.status === 404) {
+        Promise.all([
+            fetch(`${API_BASE}/recipes/${id}`),
+            fetch(`${API_BASE}/recipes/${id}/ingredients`)
+        ])
+            .then(async ([recipeRes, ingredientsRes]) => {
+                if (!recipeRes.ok) {
+                    if (recipeRes.status === 404) {
                         throw new Error("Receta no encontrada");
                     }
                     throw new Error("Error al cargar la receta");
                 }
-                const data = await r.json();
+                
+                if (!ingredientsRes.ok) {
+                    throw new Error("Error al cargar los ingredientes");
+                }
+
+                const [recipeData, ingredientsData] = await Promise.all([
+                    recipeRes.json(),
+                    ingredientsRes.json()
+                ]);
+
                 if (!cancelled) {
-                    setRecipe(data);
+                    setRecipe(recipeData);
+                    setIngredients(ingredientsData.ingredients || []);
                 }
             })
             .catch((e) => !cancelled && setError(e.message))
@@ -63,7 +82,7 @@ export default function Recipe() {
     };
 
     const handleGoBack = () => {
-        navigate('/recipes');
+        navigate(-1);
     };
 
     if (loading) {
@@ -83,7 +102,7 @@ export default function Recipe() {
                     <h2>Error</h2>
                     <p>{error}</p>
                     <Button variant="primary" size="medium" onClick={handleGoBack}>
-                        Volver a recetas
+                        Volver
                     </Button>
                 </div>
             </div>
@@ -97,7 +116,7 @@ export default function Recipe() {
                     <h2>Receta no encontrada</h2>
                     <p>La receta que buscas no existe.</p>
                     <Button variant="primary" size="medium" onClick={handleGoBack}>
-                        Volver a recetas
+                        Volver
                     </Button>
                 </div>
             </div>
@@ -108,13 +127,23 @@ export default function Recipe() {
         <div className="recipe-page">
             <div className="recipe-header-actions">
                 <Button variant="secondary" size="medium" onClick={handleGoBack}>
-                    ← Volver a recetas
+                    ← Volver
                 </Button>
             </div>
 
             <div className="recipe-detail">
                 <div className="recipe-detail-header">
-                    <h1 className="recipe-detail-title">{recipe.title}</h1>
+                    <div className="recipe-detail-title-container">
+                        <h1 className="recipe-detail-title">{recipe.title}</h1>
+                        {isAuthenticated && (
+                            <FavoriteButton
+                                recipeId={recipe.id}
+                                isFavorite={isFavorite(recipe.id)}
+                                onToggle={toggleFavorite}
+                                size="large"
+                            />
+                        )}
+                    </div>
                     <span 
                         className="recipe-detail-difficulty"
                         style={{ 
@@ -146,6 +175,19 @@ export default function Recipe() {
                         <span>Usuario ID: {recipe.user_id}</span>
                     </div>
                 </div>
+
+                {ingredients.length > 0 && (
+                    <div className="recipe-detail-section">
+                        <h3>Ingredientes</h3>
+                        <div className="recipe-detail-ingredients">
+                            {ingredients.map((ingredient, index) => (
+                                <div key={ingredient.id || index} className="recipe-ingredient">
+                                    <span className="ingredient-name">• {ingredient.name}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 {recipe.description && (
                     <div className="recipe-detail-section">

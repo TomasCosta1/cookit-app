@@ -1,0 +1,58 @@
+@import "../Profile/Profile.css";
+
+/* Botón atrás */
+.back-icon-btn {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 2px solid #fcba03;
+  background: #fffbeb;
+  color: #1a1a1a;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  box-shadow: 0 4px 12px rgba(252, 186, 3, 0.2);
+}
+
+.back-icon-btn:hover {
+  transform: translateY(-1px);
+  background: #fef3c7;
+  box-shadow: 0 6px 16px rgba(252, 186, 3, 0.3);
+}
+
+/* Botón seguir/dejar de seguir */
+.follow-toggle-btn {
+  margin-top: 16px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(252, 186, 3, 0.3);
+}
+
+.follow-toggle-btn.follow {
+  background: linear-gradient(135deg, #fcba03 0%, #f59e0b 100%);
+  color: #1a1a1a;
+}
+
+.follow-toggle-btn.follow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(252, 186, 3, 0.4);
+}
+
+.follow-toggle-btn.unfollow {
+  background: #fef3c7;
+  border: 2px solid #fcba03;
+  color: #1a1a1a;
+}
+
+.follow-toggle-btn.unfollow:hover {
+  background: #ffeb99;
+}
