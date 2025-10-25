@@ -18,10 +18,11 @@ router.get("/users/search", async (req, res) => {
       },
       attributes: ["id", "username"],
       order: [
-        [sequelize.literal(`CASE WHEN username LIKE '${q}%' THEN 1 ELSE 2 END`), "ASC"],
+        [sequelize.literal("CASE WHEN username LIKE ? THEN 1 ELSE 2 END"), "ASC"],
         ["username", "ASC"]
       ],
-      limit: 10
+      limit: 10,
+      replacements: [`${q}%`]
     });
 
     res.json(users);
