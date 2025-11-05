@@ -179,6 +179,39 @@
     flex: 1;
 }
 
+.rating {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.ratingButton {
+    width: 25%;
+    background-color: #fcba03;
+    border: none;
+    color: white;
+    padding: 5px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.rating-modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.rating-modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    padding-top: 16px;
+    border-top: 1px solid #e0e0e0;
+}
+
 @media (max-width: 768px) {
     .recipe-page {
         padding: 16px;

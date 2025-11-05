@@ -32,5 +32,10 @@ export const useRating = (recipe_id, user_id = null) => {
         fetchMean(recipe_id)
     }, [recipe_id])
 
-  return {rating: ratingMean}
+  return {
+    rating: ratingMean,
+    refetch: () => fetchMean(recipe_id),
+    loading,
+    error
+  }
 }
