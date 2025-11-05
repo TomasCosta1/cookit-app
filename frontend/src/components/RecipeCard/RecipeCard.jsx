@@ -5,6 +5,7 @@ import FavoriteButton from "../FavoriteButton/FavoriteButton";
 import { useAuth } from "../../hooks/useAuth";
 import { useFavorites } from "../../hooks/useFavorites";
 import { useRating } from "../../hooks/useRating";
+import { Rating } from "../Rating/Rating";
 
 const RecipeCard = ({ recipe }) => {
   const navigate = useNavigate();
@@ -67,41 +68,7 @@ const RecipeCard = ({ recipe }) => {
     );
   };
 
-  const renderStarRating = (rating) => {
-    if (!rating || rating === 0) {
-      return (
-        <div className="star-rating">
-          <div className="star-rating__filled" style={{ width: "0%" }}>
-            {Array.from({ length: 5 }, (_, i) => (
-              <span key={i} className="star">★</span>
-            ))}
-          </div>
-          <div className="star-rating__empty">
-            {Array.from({ length: 5 }, (_, i) => (
-              <span key={i} className="star">★</span>
-            ))}
-          </div>
-        </div>
-      );
-    }
-
-    const percentage = (rating / 5) * 100;
-
-    return (
-      <div className="star-rating">
-        <div className="star-rating__filled" style={{ width: `${percentage}%` }}>
-          {Array.from({ length: 5 }, (_, i) => (
-            <span key={i} className="star">★</span>
-          ))}
-        </div>
-        <div className="star-rating__empty">
-          {Array.from({ length: 5 }, (_, i) => (
-            <span key={i} className="star">★</span>
-          ))}
-        </div>
-      </div>
-    );
-  };
+  
   return (
     <div className="recipe-card">
       <div className="recipe-header">
@@ -142,11 +109,12 @@ const RecipeCard = ({ recipe }) => {
         <span className="recipe-date">
           📅 {new Date(recipe.created_at).toLocaleDateString("es-ES")}
         </span>
-        {rating && (
+        {rating != 0 ? (
           <span className="recipe-rating">
-            {renderStarRating(rating)}
-            {rating}
+            {<Rating rating={rating}/>}
           </span>
+        ) : (
+          <span className="recipe-rating">Sin calificar</span>
         )}
         {hasFilterInfo && (
           <>
