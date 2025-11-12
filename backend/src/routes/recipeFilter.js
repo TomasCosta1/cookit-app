@@ -102,7 +102,6 @@ router.get('/by-ingredients/:userId', async (req, res) => {
 
 router.get('/stats/:userId', async (req, res) => {
     try {
-        const { userId } = req.params;
         const { userIngredients } = req.query;
         
         if (!userIngredients) {

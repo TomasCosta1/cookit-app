@@ -17,10 +17,8 @@ const RecipeFilter = ({ onFilteredRecipes, onClearFilter, isFiltered }) => {
     }, []);
     
     const {
-        filteredRecipes,
         loading,
         error,
-        stats,
         hasIngredients,
         filterRecipes,
         clearFilter

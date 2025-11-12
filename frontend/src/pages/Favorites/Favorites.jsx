@@ -8,7 +8,7 @@ import { useFavorites } from "../../hooks/useFavorites";
 
 export default function Favorites() {
     const { user, isAuthenticated, loading: authLoading } = useAuth();
-    const { favorites, loading: favoritesLoading, error, refetch } = useFavorites(user?.id);
+    const { favorites, loading: favoritesLoading, error } = useFavorites(user?.id);
     const [q, setQ] = useState("");
     const [page, setPage] = useState(1);
     const [limit] = useState(10);

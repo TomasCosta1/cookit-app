@@ -108,7 +108,7 @@ const RecipeCard = ({ recipe }) => {
         <span className="recipe-date">
           📅 {new Date(recipe.created_at).toLocaleDateString("es-ES")}
         </span>
-        {rating != 0 ? (
+        {rating !== 0 ? (
           <span className="recipe-rating">
             {<Rating rating={rating}/>}
           </span>
