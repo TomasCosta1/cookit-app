@@ -67,7 +67,6 @@ const RecipeCard = ({ recipe }) => {
       </>
     );
   };
-
   
   return (
     <div className="recipe-card">
