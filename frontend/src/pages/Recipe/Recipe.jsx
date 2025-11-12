@@ -5,216 +5,324 @@ import Button from "../../components/Button/Button";
 import FavoriteButton from "../../components/FavoriteButton/FavoriteButton";
 import { useAuth } from "../../hooks/useAuth";
 import { useFavorites } from "../../hooks/useFavorites";
+import { useRating } from "../../hooks/useRating";
+import { Rating } from "../../components/Rating/Rating";
+import Modal from "../../components/Modal/Modal";
+import RatingInput from "../../components/RatingInput/RatingInput";
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
 export default function Recipe() {
-    const { id } = useParams();
-    const navigate = useNavigate();
-    const [recipe, setRecipe] = useState(null);
-    const [ingredients, setIngredients] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-    const { user, isAuthenticated } = useAuth();
-    const { isFavorite, toggleFavorite } = useFavorites(user?.id);
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [recipe, setRecipe] = useState(null);
+  const [ingredients, setIngredients] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+  const [selectedRating, setSelectedRating] = useState(0);
+  const [savingRating, setSavingRating] = useState(false);
+  const { user, isAuthenticated } = useAuth();
+  const { isFavorite, toggleFavorite } = useFavorites(user?.id);
+  const { rating, refetch: refetchRating } = useRating(id);
 
-    useEffect(() => {
-        if (!id || isNaN(id)) {
-            setError("ID de receta inválido");
-            setLoading(false);
-            return;
-        }
-
-        let cancelled = false;
-        setLoading(true);
-        setError("");
-
-        Promise.all([
-            fetch(`${API_BASE}/recipes/${id}`),
-            fetch(`${API_BASE}/recipes/${id}/ingredients`)
-        ])
-            .then(async ([recipeRes, ingredientsRes]) => {
-                if (!recipeRes.ok) {
-                    if (recipeRes.status === 404) {
-                        throw new Error("Receta no encontrada");
-                    }
-                    throw new Error("Error al cargar la receta");
-                }
-                
-                if (!ingredientsRes.ok) {
-                    throw new Error("Error al cargar los ingredientes");
-                }
-
-                const [recipeData, ingredientsData] = await Promise.all([
-                    recipeRes.json(),
-                    ingredientsRes.json()
-                ]);
-
-                if (!cancelled) {
-                    setRecipe(recipeData);
-                    setIngredients(ingredientsData.ingredients || []);
-                }
-            })
-            .catch((e) => !cancelled && setError(e.message))
-            .finally(() => !cancelled && setLoading(false));
-
-        return () => {
-            cancelled = true;
-        };
-    }, [id]);
-
-    const getDifficultyColor = (difficulty) => {
-        switch (difficulty) {
-            case 'easy': return '#28a745';
-            case 'medium': return '#ffc107';
-            case 'hard': return '#dc3545';
-            default: return '#6c757d';
-        }
-    };
-
-    const getDifficultyText = (difficulty) => {
-        switch (difficulty) {
-            case 'easy': return 'Fácil';
-            case 'medium': return 'Medio';
-            case 'hard': return 'Difícil';
-            default: return difficulty;
-        }
-    };
-
-    const handleGoBack = () => {
-        navigate(-1);
-    };
-
-    if (loading) {
-        return (
-            <div className="recipe-page">
-                <div className="loading">
-                    <p>Cargando receta...</p>
-                </div>
-            </div>
-        );
+  useEffect(() => {
+    if (!id || isNaN(id)) {
+      setError("ID de receta inválido");
+      setLoading(false);
+      return;
     }
 
-    if (error) {
-        return (
-            <div className="recipe-page">
-                <div className="error">
-                    <h2>Error</h2>
-                    <p>{error}</p>
-                    <Button variant="primary" size="medium" onClick={handleGoBack}>
-                        Volver
-                    </Button>
-                </div>
-            </div>
-        );
-    }
+    let cancelled = false;
+    setLoading(true);
+    setError("");
 
-    if (!recipe) {
-        return (
-            <div className="recipe-page">
-                <div className="error">
-                    <h2>Receta no encontrada</h2>
-                    <p>La receta que buscas no existe.</p>
-                    <Button variant="primary" size="medium" onClick={handleGoBack}>
-                        Volver
-                    </Button>
-                </div>
-            </div>
-        );
-    }
+    Promise.all([
+      fetch(`${API_BASE}/recipes/${id}`),
+      fetch(`${API_BASE}/recipes/${id}/ingredients`),
+    ])
+      .then(async ([recipeRes, ingredientsRes]) => {
+        if (!recipeRes.ok) {
+          if (recipeRes.status === 404) {
+            throw new Error("Receta no encontrada");
+          }
+          throw new Error("Error al cargar la receta");
+        }
 
+        if (!ingredientsRes.ok) {
+          throw new Error("Error al cargar los ingredientes");
+        }
+
+        const [recipeData, ingredientsData] = await Promise.all([
+          recipeRes.json(),
+          ingredientsRes.json(),
+        ]);
+
+        if (!cancelled) {
+          setRecipe(recipeData);
+          setIngredients(ingredientsData.ingredients || []);
+        }
+      })
+      .catch((e) => !cancelled && setError(e.message))
+      .finally(() => !cancelled && setLoading(false));
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+
+  const getDifficultyColor = (difficulty) => {
+    switch (difficulty) {
+      case "easy":
+        return "#28a745";
+      case "medium":
+        return "#ffc107";
+      case "hard":
+        return "#dc3545";
+      default:
+        return "#6c757d";
+    }
+  };
+
+  const getDifficultyText = (difficulty) => {
+    switch (difficulty) {
+      case "easy":
+        return "Fácil";
+      case "medium":
+        return "Medio";
+      case "hard":
+        return "Difícil";
+      default:
+        return difficulty;
+    }
+  };
+
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+
+  const handleOpenRatingModal = () => {
+    setIsRatingModalOpen(true);
+    setSelectedRating(0);
+  };
+
+  const handleCloseRatingModal = () => {
+    setIsRatingModalOpen(false);
+    setSelectedRating(0);
+  };
+
+  const handleRatingSelect = (ratingValue) => {
+    setSelectedRating(ratingValue);
+  };
+
+  const handleSaveRating = async () => {
+    if (!selectedRating || !user?.id || !id) return;
+
+    setSavingRating(true);
+    try {
+      const response = await fetch(`${API_BASE}/ratings`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: user.id,
+          recipe_id: parseInt(id),
+          rating: selectedRating
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al guardar la calificación');
+      }
+
+      await refetchRating();
+      
+      setIsRatingModalOpen(false);
+      setSelectedRating(0);
+    } catch (err) {
+      console.error('Error al guardar rating:', err);
+      setError(err.message);
+    } finally {
+      setSavingRating(false);
+    }
+  };
+
+  if (loading) {
     return (
-        <div className="recipe-page">
-            <div className="recipe-header-actions">
-                <Button variant="secondary" size="medium" onClick={handleGoBack}>
-                    ← Volver
-                </Button>
-            </div>
-
-            <div className="recipe-detail">
-                <div className="recipe-detail-header">
-                    <div className="recipe-detail-title-container">
-                        <h1 className="recipe-detail-title">{recipe.title}</h1>
-                        {isAuthenticated && (
-                            <FavoriteButton
-                                recipeId={recipe.id}
-                                isFavorite={isFavorite(recipe.id)}
-                                onToggle={toggleFavorite}
-                                size="large"
-                            />
-                        )}
-                    </div>
-                    <span 
-                        className="recipe-detail-difficulty"
-                        style={{ 
-                            backgroundColor: getDifficultyColor(recipe.difficulty),
-                            color: 'white',
-                            padding: '6px 12px',
-                            borderRadius: '6px',
-                            fontSize: '14px',
-                            fontWeight: 'bold'
-                        }}
-                    >
-                        {getDifficultyText(recipe.difficulty)}
-                    </span>
-                </div>
-
-                <div className="recipe-detail-meta">
-                    {recipe.cook_time && (
-                        <div className="recipe-detail-meta-item">
-                            <span className="icon">⏱️</span>
-                            <span>Tiempo de cocción: {recipe.cook_time} minutos</span>
-                        </div>
-                    )}
-                    <div className="recipe-detail-meta-item">
-                        <span className="icon">📅</span>
-                        <span>Creado: {new Date(recipe.created_at).toLocaleDateString('es-ES')}</span>
-                    </div>
-                    <div className="recipe-detail-meta-item">
-                        <span className="icon">👤</span>
-                        <span>Usuario ID: {recipe.user_id}</span>
-                    </div>
-                </div>
-
-                {ingredients.length > 0 && (
-                    <div className="recipe-detail-section">
-                        <h3>Ingredientes</h3>
-                        <div className="recipe-detail-ingredients">
-                            {ingredients.map((ingredient, index) => (
-                                <div key={ingredient.id || index} className="recipe-ingredient">
-                                    <span className="ingredient-name">• {ingredient.name}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {recipe.description && (
-                    <div className="recipe-detail-section">
-                        <h3>Descripción</h3>
-                        <p className="recipe-detail-description">{recipe.description}</p>
-                    </div>
-                )}
-
-                {recipe.steps && (
-                    <div className="recipe-detail-section">
-                        <h3>Instrucciones</h3>
-                        <div className="recipe-detail-steps">
-                            {recipe.steps.split('\n').map((step, index) => {
-                                const trimmedStep = step.trim();
-                                if (!trimmedStep) return null;
-                                
-                                return (
-                                    <div key={index} className="recipe-step">
-                                        <div className="recipe-step-number">{index + 1}</div>
-                                        <div className="recipe-step-content">{trimmedStep}</div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                )}
-            </div>
+      <div className="recipe-page">
+        <div className="loading">
+          <p>Cargando receta...</p>
         </div>
+      </div>
     );
+  }
+
+  if (error) {
+    return (
+      <div className="recipe-page">
+        <div className="error">
+          <h2>Error</h2>
+          <p>{error}</p>
+          <Button variant="primary" size="medium" onClick={handleGoBack}>
+            Volver
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!recipe) {
+    return (
+      <div className="recipe-page">
+        <div className="error">
+          <h2>Receta no encontrada</h2>
+          <p>La receta que buscas no existe.</p>
+          <Button variant="primary" size="medium" onClick={handleGoBack}>
+            Volver
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="recipe-page">
+      <div className="recipe-header-actions">
+        <Button variant="secondary" size="medium" onClick={handleGoBack}>
+          ← Volver
+        </Button>
+      </div>
+
+      <div className="recipe-detail">
+        <div className="recipe-detail-header">
+          <div className="recipe-detail-title-container">
+            <h1 className="recipe-detail-title">{recipe.title}</h1>
+            {isAuthenticated && (
+              <FavoriteButton
+                recipeId={recipe.id}
+                isFavorite={isFavorite(recipe.id)}
+                onToggle={toggleFavorite}
+                size="large"
+              />
+            )}
+          </div>
+          <span
+            className="recipe-detail-difficulty"
+            style={{
+              backgroundColor: getDifficultyColor(recipe.difficulty),
+              color: "white",
+              padding: "6px 12px",
+              borderRadius: "6px",
+              fontSize: "14px",
+              fontWeight: "bold",
+            }}
+          >
+            {getDifficultyText(recipe.difficulty)}
+          </span>
+        </div>
+
+        <div className="rating">
+          <div>
+            {rating != 0 ? <Rating rating={rating} /> : <p>Sin calificar</p>}
+          </div>
+          {isAuthenticated && (
+            <button className="ratingButton" onClick={handleOpenRatingModal}>
+              Calificar
+            </button>
+          )}
+        </div>
+
+        <Modal
+          open={isRatingModalOpen}
+          onClose={handleCloseRatingModal}
+          title="Calificar receta"
+        >
+          <div className="rating-modal-content">
+            <RatingInput
+              onRatingSelect={handleRatingSelect}
+              initialRating={selectedRating}
+            />
+            <div className="rating-modal-actions">
+              <Button
+                variant="secondary"
+                size="medium"
+                onClick={handleCloseRatingModal}
+                disabled={savingRating}
+              >
+                Cancelar
+              </Button>
+              <Button
+                variant="primary"
+                size="medium"
+                onClick={handleSaveRating}
+                disabled={selectedRating === 0 || savingRating}
+              >
+                {savingRating ? 'Guardando...' : 'Guardar calificación'}
+              </Button>
+            </div>
+          </div>
+        </Modal>
+
+        <div className="recipe-detail-meta">
+          {recipe.cook_time && (
+            <div className="recipe-detail-meta-item">
+              <span className="icon">⏱️</span>
+              <span>Tiempo de cocción: {recipe.cook_time} minutos</span>
+            </div>
+          )}
+          <div className="recipe-detail-meta-item">
+            <span className="icon">📅</span>
+            <span>
+              Creado: {new Date(recipe.created_at).toLocaleDateString("es-ES")}
+            </span>
+          </div>
+          <div className="recipe-detail-meta-item">
+            <span className="icon">👤</span>
+            <span>Usuario ID: {recipe.user_id}</span>
+          </div>
+        </div>
+
+        {ingredients.length > 0 && (
+          <div className="recipe-detail-section">
+            <h3>Ingredientes</h3>
+            <div className="recipe-detail-ingredients">
+              {ingredients.map((ingredient, index) => (
+                <div key={ingredient.id || index} className="recipe-ingredient">
+                  <span className="ingredient-name">• {ingredient.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {recipe.description && (
+          <div className="recipe-detail-section">
+            <h3>Descripción</h3>
+            <p className="recipe-detail-description">{recipe.description}</p>
+          </div>
+        )}
+
+        {recipe.steps && (
+          <div className="recipe-detail-section">
+            <h3>Instrucciones</h3>
+            <div className="recipe-detail-steps">
+              {recipe.steps.split("\n").map((step, index) => {
+                const trimmedStep = step.trim();
+                if (!trimmedStep) return null;
+
+                return (
+                  <div key={index} className="recipe-step">
+                    <div className="recipe-step-number">{index + 1}</div>
+                    <div className="recipe-step-content">{trimmedStep}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }

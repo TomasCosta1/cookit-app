@@ -4,11 +4,14 @@ import Button from "../Button/Button";
 import FavoriteButton from "../FavoriteButton/FavoriteButton";
 import { useAuth } from "../../hooks/useAuth";
 import { useFavorites } from "../../hooks/useFavorites";
+import { useRating } from "../../hooks/useRating";
+import { Rating } from "../Rating/Rating";
 
 const RecipeCard = ({ recipe }) => {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
   const { isFavorite, toggleFavorite } = useFavorites(user?.id);
+  const {rating} = useRating(recipe.id)
 
   const hasFilterInfo = recipe.matching_ingredients !== undefined;
 
@@ -64,6 +67,7 @@ const RecipeCard = ({ recipe }) => {
       </>
     );
   };
+  
   return (
     <div className="recipe-card">
       <div className="recipe-header">
@@ -104,6 +108,13 @@ const RecipeCard = ({ recipe }) => {
         <span className="recipe-date">
           📅 {new Date(recipe.created_at).toLocaleDateString("es-ES")}
         </span>
+        {rating !== 0 ? (
+          <span className="recipe-rating">
+            {<Rating rating={rating}/>}
+          </span>
+        ) : (
+          <span className="recipe-rating">Sin calificar</span>
+        )}
         {hasFilterInfo && (
           <>
             <span className="match-count">Ingredientes:</span>

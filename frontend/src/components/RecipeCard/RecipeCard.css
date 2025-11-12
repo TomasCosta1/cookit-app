@@ -115,16 +115,6 @@
 }
 
 @media (max-width: 768px) {
-    .ingredient-match {
-        gap: 4px;
-    }
-    
-    .match-count{
-        font-size: 14px;
-    }
-}
-
-@media (max-width: 768px) {
     .recipe-header {
         flex-direction: column;
         align-items: flex-start;
@@ -143,5 +133,13 @@
     .recipe-actions .btn {
         flex: 1;
         min-width: 0;
+    }
+
+    .ingredient-match {
+        gap: 4px;
+    }
+    
+    .match-count{
+        font-size: 14px;
     }
 }
