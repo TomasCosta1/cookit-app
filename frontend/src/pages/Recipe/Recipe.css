@@ -61,7 +61,18 @@
     flex: 1;
 }
 
+.recipe-detail-badges {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 12px;
+}
+
 .recipe-detail-difficulty {
+    flex-shrink: 0;
+}
+
+.recipe-detail-category-badge {
     flex-shrink: 0;
 }
 
@@ -230,6 +241,11 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 12px;
+    }
+    
+    .recipe-detail-badges {
+        width: 100%;
+        flex-wrap: wrap;
     }
     
     .recipe-detail-title {

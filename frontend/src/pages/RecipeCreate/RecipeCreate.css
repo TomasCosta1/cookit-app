@@ -57,6 +57,17 @@
 	background: #fff;
 }
 
+.recipe-create-page .row-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	gap: 16px;
+	margin: 12px 0;
+}
+
+.recipe-create-page .row-grid label {
+	margin: 0;
+}
+
 /* Sections */
 .recipe-create-page section {
 	margin-top: 18px;
@@ -179,6 +190,33 @@
 	.recipe-create-page form {
 		border-radius: 12px;
 		padding: 16px;
+	}
+
+	.recipe-create-page .row-grid {
+		grid-template-columns: 1fr;
+		gap: 12px;
+	}
+
+	.selected-ingredients {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+	}
+
+	.selected-ingredients ul {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		width: 100%;
+		padding: 0;
+	}
+
+	.selected-item {
+		display: flex;
+		justify-content: space-between;
+		text-align: center;
+		gap: 1rem;
+		width: 100%;
 	}
 }
 

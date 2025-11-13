@@ -17,13 +17,30 @@ export default function RecipeCreate() {
     const [stepsText, setStepsText] = useState("");
     const [cookTime, setCookTime] = useState("");
     const [difficulty, setDifficulty] = useState("easy");
+    const [categoryId, setCategoryId] = useState("");
 
     const [query, setQuery] = useState("");
     const [ingredientsResults, setIngredientsResults] = useState([]);
     const [selectedIngredients, setSelectedIngredients] = useState([]);
+    const [categories, setCategories] = useState([]);
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+
+    useEffect(() => {
+        const loadCategories = async () => {
+            try {
+                const res = await fetch(`${API_BASE}/categories`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setCategories(data);
+                }
+            } catch (e) {
+                console.error('Error al cargar categorías:', e);
+            }
+        };
+        loadCategories();
+    }, []);
 
     // Reutilizo el endpoint existente de ingredientes
     useEffect(() => {
@@ -60,8 +77,9 @@ export default function RecipeCreate() {
         title.trim().length > 0 &&
         description.trim().length > 0 &&
         stepsText.trim().length > 0 &&
-        selectedIngredients.length > 0
-    ), [title, description, stepsText, selectedIngredients]);
+        selectedIngredients.length > 0 &&
+        categoryId !== ""
+    ), [title, description, stepsText, selectedIngredients, categoryId]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -74,8 +92,8 @@ export default function RecipeCreate() {
 
         setLoading(true);
         try {
-            if (description.trim() === '' || stepsText.trim() === '' || selectedIngredients.length === 0) {
-                throw new Error('Título, descripción, pasos e ingredientes son obligatorios');
+            if (description.trim() === '' || stepsText.trim() === '' || selectedIngredients.length === 0 || !categoryId) {
+                throw new Error('Título, descripción, pasos, categoría e ingredientes son obligatorios');
             }
 
             const body = {
@@ -85,6 +103,7 @@ export default function RecipeCreate() {
                 steps: stepsText.trim(),
                 cook_time: cookTime ? Number(cookTime) : null,
                 difficulty: difficulty || 'easy',
+                category_id: categoryId ? parseInt(categoryId) : null,
                 ingredient_ids: selectedIngredients.map(i => i.id)
             };
 
@@ -156,6 +175,20 @@ export default function RecipeCreate() {
                             <option value="easy">Fácil</option>
                             <option value="medium">Medio</option>
                             <option value="hard">Difícil</option>
+                        </select>
+                    </label>
+                    <label>
+                        Categoría
+                        <select 
+                            value={categoryId} 
+                            onChange={(e) => setCategoryId(e.target.value)}
+                            required
+                        >
+                            {categories.map(cat => (
+                                <option key={cat.id} value={cat.id}>
+                                    {cat.category_name || cat.filter_name || `Categoría ${cat.id}`}
+                                </option>
+                            ))}
                         </select>
                     </label>
                 </div>

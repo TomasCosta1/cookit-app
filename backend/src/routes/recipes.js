@@ -4,7 +4,14 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
-        const query = `SELECT * FROM recipes r ORDER BY r.created_at DESC`;
+        const query = `
+            SELECT 
+                r.*,
+                c.category_name
+            FROM recipes r
+            LEFT JOIN categories c ON r.category_id = c.id
+            ORDER BY r.created_at DESC
+        `;
 
         const [recipes] = await promisePool.execute(query);
         
@@ -30,7 +37,14 @@ router.get('/:id', async (req, res) => {
             });
         }
         
-        const query = `SELECT * FROM recipes r WHERE r.id = ?`;
+        const query = `
+            SELECT 
+                r.*,
+                c.category_name
+            FROM recipes r
+            LEFT JOIN categories c ON r.category_id = c.id
+            WHERE r.id = ?
+        `;
         
         const [recipes] = await promisePool.execute(query, [id]);
         
@@ -103,7 +117,7 @@ router.get('/:id/ingredients', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const { user_id, title, description, steps, cook_time, difficulty, ingredient_ids } = req.body;
+        const { user_id, title, description, steps, cook_time, difficulty, category_id, ingredient_ids } = req.body;
         
         // Validaciones obligatorias
         if (!user_id) {
@@ -121,6 +135,9 @@ router.post('/', async (req, res) => {
         if (!Array.isArray(ingredient_ids) || ingredient_ids.length === 0) {
             return res.status(400).json({ success: false, message: 'ingredients es obligatorio (ingredient_ids debe contener al menos 1 id)' });
         }
+        if (!category_id || category_id === '' || category_id === null || category_id === undefined) {
+            return res.status(400).json({ success: false, message: 'category_id es obligatorio' });
+        }
         
         const validDifficulties = ['easy', 'medium', 'hard'];
         if (difficulty && !validDifficulties.includes(difficulty)) {
@@ -136,6 +153,23 @@ router.post('/', async (req, res) => {
                 message: 'cook_time debe ser un número positivo'
             });
         }
+
+        if (isNaN(category_id) || category_id <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'category_id debe ser un número válido'
+            });
+        }
+        const [categoryCheck] = await promisePool.execute(
+            'SELECT id FROM categories WHERE id = ?',
+            [parseInt(category_id)]
+        );
+        if (categoryCheck.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'La categoría especificada no existe'
+            });
+        }
         
         // Transacción: crear receta y asociar ingredientes
         const conn = await promisePool.getConnection();
@@ -143,8 +177,8 @@ router.post('/', async (req, res) => {
             await conn.beginTransaction();
 
             const insertSql = `
-                INSERT INTO recipes (user_id, title, description, steps, cook_time, difficulty)
-                VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO recipes (user_id, title, description, steps, cook_time, difficulty, category_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
             `;
             const [result] = await conn.execute(insertSql, [
                 user_id,
@@ -152,7 +186,8 @@ router.post('/', async (req, res) => {
                 String(description).trim(),
                 String(steps).trim(),
                 cook_time || null,
-                difficulty || 'easy'
+                difficulty || 'easy',
+                parseInt(category_id)
             ]);
 
             const recipeId = result.insertId;
