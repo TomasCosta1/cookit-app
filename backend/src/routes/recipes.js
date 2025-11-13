@@ -4,7 +4,14 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
-        const query = `SELECT * FROM recipes r ORDER BY r.created_at DESC`;
+        const query = `
+            SELECT 
+                r.*,
+                c.category_name
+            FROM recipes r
+            LEFT JOIN categories c ON r.category_id = c.id
+            ORDER BY r.created_at DESC
+        `;
 
         const [recipes] = await promisePool.execute(query);
         
@@ -30,7 +37,14 @@ router.get('/:id', async (req, res) => {
             });
         }
         
-        const query = `SELECT * FROM recipes r WHERE r.id = ?`;
+        const query = `
+            SELECT 
+                r.*,
+                c.category_name
+            FROM recipes r
+            LEFT JOIN categories c ON r.category_id = c.id
+            WHERE r.id = ?
+        `;
         
         const [recipes] = await promisePool.execute(query, [id]);
         

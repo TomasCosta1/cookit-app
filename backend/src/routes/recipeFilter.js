@@ -174,10 +174,12 @@ router.get('/combined/:userId', async (req, res) => {
         let query = `
             SELECT DISTINCT
                 r.*,
+                c.category_name,
                 COUNT(DISTINCT ri.ingredient_id) as matching_ingredients,
                 GROUP_CONCAT(DISTINCT ri.ingredient_id) as matched_ingredient_ids,
                 GROUP_CONCAT(DISTINCT i.name) as matched_ingredient_names
             FROM recipes r
+            LEFT JOIN categories c ON r.category_id = c.id
             LEFT JOIN recipe_ingredients ri ON r.id = ri.recipe_id
             LEFT JOIN ingredients i ON ri.ingredient_id = i.id
         `;
@@ -276,7 +278,8 @@ router.get('/combined/:userId', async (req, res) => {
                 has_category: !!categoryId,
                 has_max_time: !!maxTime,
                 has_difficulty: !!difficulty
-            }
+            },
+            filtered_by_ingredients: ingredientIds.length > 0
         });
         
     } catch (error) {
