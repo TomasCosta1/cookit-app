@@ -158,6 +158,7 @@ const RecipeFilter = ({ onFilteredRecipes, onClearFilter, isFiltered }) => {
                                 type="number"
                                 className="recipe-filter__input"
                                 min="1"
+                                max="1440"
                                 placeholder="Ej: 30"
                                 value={filters.maxTime}
                                 onChange={(e) => handleFilterChange('maxTime', e.target.value)}
