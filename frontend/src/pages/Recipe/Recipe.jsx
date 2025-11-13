@@ -208,19 +208,36 @@ export default function Recipe() {
               />
             )}
           </div>
-          <span
-            className="recipe-detail-difficulty"
-            style={{
-              backgroundColor: getDifficultyColor(recipe.difficulty),
-              color: "white",
-              padding: "6px 12px",
-              borderRadius: "6px",
-              fontSize: "14px",
-              fontWeight: "bold",
-            }}
-          >
-            {getDifficultyText(recipe.difficulty)}
-          </span>
+          <div className="recipe-detail-badges">
+            <span
+              className="recipe-detail-difficulty"
+              style={{
+                backgroundColor: getDifficultyColor(recipe.difficulty),
+                color: "white",
+                padding: "6px 12px",
+                borderRadius: "6px",
+                fontSize: "14px",
+                fontWeight: "bold",
+              }}
+            >
+              {getDifficultyText(recipe.difficulty)}
+            </span>
+            {recipe.category_name && (
+              <span
+                className="recipe-detail-category-badge"
+                style={{
+                  backgroundColor: "#6c757d",
+                  color: "white",
+                  padding: "6px 12px",
+                  borderRadius: "6px",
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                }}
+              >
+                {recipe.category_name}
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="rating">
