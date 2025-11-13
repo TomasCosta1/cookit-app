@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./UserSearchPage.css";
 
@@ -22,6 +22,11 @@ export default function UserSearchPage() {
     try {
       setLoading(true);
       const res = await fetch(`${API_BASE}/api/users/search?q=${value}`, { credentials: "include" });
+      if (!res.ok) {
+        console.error("Error en la respuesta:", res.status);
+        setUsers([]);
+        return;
+      }
       const data = await res.json();
       setUsers(data);
     } catch (err) {
@@ -52,7 +57,7 @@ export default function UserSearchPage() {
       {loading && <p className="loading-text">Buscando...</p>}
 
       <div className="search-results">
-        {users.length === 0 && !loading ? (
+        {users.length === 0 && !loading && query.trim() !== "" ? (
           <p className="empty-text">No se encontraron usuarios.</p>
         ) : (
           users.map((user) => (
