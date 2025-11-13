@@ -210,8 +210,16 @@ router.get('/combined/:userId', async (req, res) => {
         }
 
         if (maxTime && !isNaN(maxTime)) {
-            conditions.push('r.cook_time <= ?');
-            params.push(parseInt(maxTime));
+            const maxTimeInt = parseInt(maxTime);
+            if (maxTimeInt > 0) {
+                conditions.push('r.cook_time <= ?');
+                params.push(maxTimeInt);
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    message: 'El tiempo máximo debe ser un número mayor que cero'
+                });
+            }
         }
 
         const validDifficulties = ['easy', 'medium', 'hard'];
