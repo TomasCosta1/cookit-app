@@ -38,7 +38,7 @@ router.get('/:id', async (req, res) => {
         if (recipes.length === 0) {
             return res.status(404).json({
                 success: false,
-                message: 'Categoria no encontrada'
+                message: 'Categoría no encontrada'
             });
         }
 
