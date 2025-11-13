@@ -12,6 +12,7 @@ import Favorites from './pages/Favorites/Favorites.jsx'
 import { Header } from './components/Header/Header.jsx'
 import Profile from "./pages/Profile/Profile.jsx";
 import ProfileView from "./pages/ProfileView/ProfileView.jsx";
+import UserSearchPage from "./pages/UserSearchPage/UserSearchPage.jsx";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/:id" element={<ProfileView />} />
+        <Route path="/user-search" element={<UserSearchPage />} />
       </Routes>
     </BrowserRouter>
   );

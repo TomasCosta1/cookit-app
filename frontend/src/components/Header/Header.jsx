@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 import './Header.css'
 import DinnerDiningIcon from '@mui/icons-material/DinnerDining';
 import PersonIcon from '@mui/icons-material/Person';
-import HomeIcon from '@mui/icons-material/Home';
+import GroupIcon from '@mui/icons-material/Group';
 import StarIcon from '@mui/icons-material/Star';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCarrot } from '@fortawesome/free-solid-svg-icons';
@@ -15,7 +15,7 @@ function CarrotIcon() {
 export const Header = () => {
   return (
     <nav className='nav'>
-        <NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''}><HomeIcon /></NavLink>
+        <NavLink to="/user-search" className={({ isActive }) => isActive ? 'active' : ''}><GroupIcon /></NavLink>
         <NavLink to="/ingredients" className={({ isActive }) => isActive ? 'active' : ''}><CarrotIcon /></NavLink>
         <NavLink to="/recipes" className={({ isActive }) => 'recipesIcon' + (isActive ? ' active' : '')}><DinnerDiningIcon /></NavLink>
         <NavLink to="/favorites" className={({ isActive }) => isActive ? 'active' : ''}><StarIcon /></NavLink>
