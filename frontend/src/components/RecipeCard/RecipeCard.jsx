@@ -13,7 +13,7 @@ const RecipeCard = ({ recipe }) => {
   const { isFavorite, toggleFavorite } = useFavorites(user?.id);
   const {rating} = useRating(recipe.id)
 
-  const hasFilterInfo = recipe.matching_ingredients !== undefined;
+  const hasFilterInfo = recipe._filteredByIngredients && recipe.matching_ingredients !== undefined && recipe.matching_ingredients > 0;
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
@@ -82,19 +82,36 @@ const RecipeCard = ({ recipe }) => {
             />
           )}
         </div>
-        <span
-          className="recipe-difficulty"
-          style={{
-            backgroundColor: getDifficultyColor(recipe.difficulty),
-            color: "white",
-            padding: "4px 8px",
-            borderRadius: "4px",
-            fontSize: "12px",
-            fontWeight: "bold",
-          }}
-        >
-          {getDifficultyText(recipe.difficulty)}
-        </span>
+        <div className="recipe-badges">
+          <span
+            className="recipe-difficulty"
+            style={{
+              backgroundColor: getDifficultyColor(recipe.difficulty),
+              color: "white",
+              padding: "4px 8px",
+              borderRadius: "4px",
+              fontSize: "12px",
+              fontWeight: "bold",
+            }}
+          >
+            {getDifficultyText(recipe.difficulty)}
+          </span>
+          {recipe.category_name && (
+            <span
+              className="recipe-category-badge"
+              style={{
+                backgroundColor: "#6c757d",
+                color: "white",
+                padding: "4px 8px",
+                borderRadius: "4px",
+                fontSize: "12px",
+                fontWeight: "bold",
+              }}
+            >
+              {recipe.category_name}
+            </span>
+          )}
+        </div>
       </div>
 
       {recipe.description && (
