@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
 
         res.status(200).json(categories);
     } catch (error) {
-        console.error('Error al obtener las categorias:', error);
+        console.error('Error al obtener las categorías:', error);
         res.status(500).json({
             success: false,
             message: 'Error interno del servidor',
