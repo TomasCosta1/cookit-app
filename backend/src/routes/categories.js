@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
 
         const [categories] = await promisePool.execute(query);
 
-        res.status(200).json(categories)
+        res.status(200).json(categories);
     } catch (error) {
         console.error('Error al obtener las categorias:', error);
         res.status(500).json({
