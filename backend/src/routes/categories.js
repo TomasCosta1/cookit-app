@@ -8,9 +8,9 @@ router.get('/', async (req, res) => {
 
         const [categories] = await promisePool.execute(query);
 
-        res.status(200).json(categories);
+        res.status(200).json(categories)
     } catch (error) {
-        console.error('Error al obtener las categorías:', error);
+        console.error('Error al obtener las categorias:', error);
         res.status(500).json({
             success: false,
             message: 'Error interno del servidor',
@@ -38,14 +38,14 @@ router.get('/:id', async (req, res) => {
         if (recipes.length === 0) {
             return res.status(404).json({
                 success: false,
-                message: 'Categoría no encontrada'
+                message: 'Categoria no encontrada'
             });
         }
 
         res.status(200).json(recipes)
 
     } catch (error) {
-        console.error('Error al obtener la categoria:', error);
+        console.error('Error al obtener la categoría:', error);
         res.status(500).json({
             success: false,
             message: 'Error interno del servidor',
