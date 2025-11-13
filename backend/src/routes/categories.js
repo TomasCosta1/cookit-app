@@ -31,7 +31,7 @@ router.get('/:id', async (req, res) => {
             });
         }
 
-        const query = `SELECT * FROM recipes WHERE category_id = ?`;
+        const query = `SELECT * FROM categories WHERE id = ?`;
 
         const [recipes] = await promisePool.execute(query, [id])
 

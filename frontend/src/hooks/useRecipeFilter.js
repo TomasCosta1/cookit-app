@@ -2,16 +2,23 @@ import { useState, useEffect, useCallback } from 'react';
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
-export const useRecipeFilter = (userIngredients = []) => {
+export const useRecipeFilter = (userIngredients = [], filters = {}) => {
     const [filteredRecipes, setFilteredRecipes] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [stats, setStats] = useState(null);
     const [isFiltered, setIsFiltered] = useState(false);
 
-    const filterRecipes = async () => {
-        if (!userIngredients || userIngredients.length === 0) {
-            setError('No hay ingredientes para filtrar');
+    const filterRecipes = async (customFilters = {}) => {
+        const activeFilters = { ...filters, ...customFilters };
+        
+        const hasIngredients = userIngredients && userIngredients.length > 0;
+        const hasCategory = activeFilters.categoryId && activeFilters.categoryId !== '';
+        const hasMaxTime = activeFilters.maxTime && activeFilters.maxTime > 0;
+        const hasDifficulty = activeFilters.difficulty && activeFilters.difficulty !== '';
+        
+        if (!hasIngredients && !hasCategory && !hasMaxTime && !hasDifficulty) {
+            setError('Selecciona al menos un filtro');
             return [];
         }
 
@@ -19,12 +26,25 @@ export const useRecipeFilter = (userIngredients = []) => {
         setError(null);
 
         try {
-            const ingredientIds = userIngredients.map(ing => ing.id);
-            const userIngredientsParam = encodeURIComponent(JSON.stringify(ingredientIds));
+            const params = new URLSearchParams();
             
+            if (hasIngredients) {
+                const ingredientIds = userIngredients.map(ing => ing.id);
+                params.set('userIngredients', JSON.stringify(ingredientIds));
+            }
+            
+            if (hasCategory) {
+                params.set('categoryId', activeFilters.categoryId);
+            }
+            if (hasMaxTime) {
+                params.set('maxTime', activeFilters.maxTime);
+            }
+            if (hasDifficulty) {
+                params.set('difficulty', activeFilters.difficulty);
+            }
             
             const response = await fetch(
-                `${API_BASE}/filter/by-ingredients/1?userIngredients=${userIngredientsParam}`
+                `${API_BASE}/filter/combined/1?${params.toString()}`
             );
             
             if (!response.ok) {
@@ -37,7 +57,7 @@ export const useRecipeFilter = (userIngredients = []) => {
                 setFilteredRecipes(data.recipes);
                 setStats({
                     total: data.total,
-                    userIngredientsCount: data.user_ingredients_count
+                    filters_applied: data.filters_applied
                 });
                 setIsFiltered(true);
                 return data.recipes;
@@ -53,28 +73,6 @@ export const useRecipeFilter = (userIngredients = []) => {
         }
     };
 
-    const getStats = useCallback(async () => {
-        if (!userIngredients || userIngredients.length === 0) return;
-
-        try {
-            const ingredientIds = userIngredients.map(ing => ing.id);
-            const userIngredientsParam = encodeURIComponent(JSON.stringify(ingredientIds));
-            
-            const response = await fetch(
-                `${API_BASE}/filter/stats/1?userIngredients=${userIngredientsParam}`
-            );
-            
-            if (response.ok) {
-                const data = await response.json();
-                if (data.success) {
-                    setStats(data.stats);
-                }
-            }
-        } catch (err) {
-            console.error('Error al obtener estadísticas:', err);
-        }
-    }, [userIngredients]);
-
     const clearFilter = useCallback(() => {
         setFilteredRecipes([]);
         setStats(null);
@@ -83,14 +81,6 @@ export const useRecipeFilter = (userIngredients = []) => {
     }, []);
 
     const hasIngredients = userIngredients && userIngredients.length > 0;
-
-    useEffect(() => {
-        if (hasIngredients) {
-            getStats();
-        } else {
-            clearFilter();
-        }
-    }, [hasIngredients, getStats, clearFilter]);
 
     return {
         filteredRecipes,
