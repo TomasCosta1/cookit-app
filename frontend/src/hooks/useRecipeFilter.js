@@ -8,6 +8,7 @@ export const useRecipeFilter = (userIngredients = [], filters = {}) => {
     const [error, setError] = useState(null);
     const [stats, setStats] = useState(null);
     const [isFiltered, setIsFiltered] = useState(false);
+    const [filteredByIngredients, setFilteredByIngredients] = useState(false);
 
     const filterRecipes = async (customFilters = {}) => {
         const activeFilters = { ...filters, ...customFilters };
@@ -54,13 +55,18 @@ export const useRecipeFilter = (userIngredients = [], filters = {}) => {
             const data = await response.json();
             
             if (data.success) {
-                setFilteredRecipes(data.recipes);
+                const recipesWithFilterInfo = data.recipes.map(recipe => ({
+                    ...recipe,
+                    _filteredByIngredients: data.filtered_by_ingredients || false
+                }));
+                setFilteredRecipes(recipesWithFilterInfo);
+                setFilteredByIngredients(data.filtered_by_ingredients || false);
                 setStats({
                     total: data.total,
                     filters_applied: data.filters_applied
                 });
                 setIsFiltered(true);
-                return data.recipes;
+                return recipesWithFilterInfo;
             } else {
                 throw new Error(data.message || 'Error al filtrar recetas');
             }
