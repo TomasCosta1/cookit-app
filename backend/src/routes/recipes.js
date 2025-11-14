@@ -4,17 +4,37 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
-        const query = `
+        const { categoryId, category } = req.query;
+
+        let query = `
             SELECT 
                 r.*,
                 c.category_name
             FROM recipes r
             LEFT JOIN categories c ON r.category_id = c.id
-            ORDER BY r.created_at DESC
         `;
 
-        const [recipes] = await promisePool.execute(query);
-        
+        const params = [];
+
+        // Priorizar `categoryId` cuando se provee; si no, permitir `category` por nombre
+        if (categoryId !== undefined && categoryId !== '') {
+            if (isNaN(categoryId)) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'categoryId debe ser un número válido'
+                });
+            }
+            query += ' WHERE r.category_id = ?';
+            params.push(parseInt(categoryId, 10));
+        } else if (category !== undefined && category !== '') {
+            query += ' WHERE c.category_name = ?';
+            params.push(String(category));
+        }
+
+        query += ' ORDER BY r.created_at DESC';
+
+        const [recipes] = await promisePool.execute(query, params);
+
         res.status(200).json(recipes);
     } catch (error) {
         console.error('Error al obtener recetas:', error);

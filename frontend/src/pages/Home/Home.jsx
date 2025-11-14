@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom"; 
+import { useNavigate, useLocation } from "react-router-dom";
 import "./Home.css";
-import Button from "../../components/Button/Button";
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
@@ -15,11 +14,10 @@ export default function Home() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Primero intentamos validar con el backend (sistema real)
-        const res = await fetch(`${API_BASE}/api/auth/profile`, { 
-          credentials: "include" 
+        const res = await fetch(`${API_BASE}/api/auth/profile`, {
+          credentials: "include",
         });
-        
+
         if (res.ok) {
           const data = await res.json();
           setUsername(data.user.username);
@@ -31,7 +29,6 @@ export default function Home() {
         console.error("Error al verificar autenticación:", err);
       }
 
-      // Si no hay sesión en el backend, marcamos como invitado
       setIsGuest(true);
       setUsername(null);
       setLoading(false);
@@ -40,22 +37,49 @@ export default function Home() {
     checkAuth();
   }, [location]);
 
-  const handleLoginRedirect = () => {
-    navigate("/login");
-  };
+  const [categoriesState, setCategoriesState] = useState([]);
+  const [catsLoading, setCatsLoading] = useState(true);
+  const [catsError, setCatsError] = useState(null);
 
-  const handleLogout = async () => {
-    try {
-      await fetch(`${API_BASE}/api/auth/logout`, { 
-        method: "POST", 
-        credentials: "include" 
-      });
-    } catch (err) {
-      console.error("Error al cerrar sesión:", err);
+  const rawCategoryImages = import.meta.glob('../../assets/imgCategories/*.webp', { as: 'url', eager: true });
+  const imagesMap = Object.fromEntries(
+    Object.entries(rawCategoryImages).map(([p, url]) => {
+      const file = p.split('/').pop();
+      const id = file ? file.split('.')[0] : null;
+      return [id, url];
+    }).filter(([k]) => k !== null)
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    const fetchCategories = async () => {
+      setCatsLoading(true);
+      setCatsError(null);
+      try {
+        const res = await fetch(`${API_BASE}/categories`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (!cancelled) {
+          setCategoriesState(Array.isArray(data) ? data : []);
+        }
+      } catch (err) {
+        if (!cancelled) setCatsError(err.message || 'Error al obtener categorías');
+      } finally {
+        if (!cancelled) setCatsLoading(false);
+      }
+    };
+
+    fetchCategories();
+    return () => { cancelled = true; };
+  }, []);
+
+  const handleCategoryClick = (category) => {
+    if (category && category.id) {
+      navigate(`/recipes?categoryId=${encodeURIComponent(category.id)}`);
+    } else if (category && (category.category_name || category.name)) {
+      const name = category.category_name || category.name;
+      navigate(`/recipes?category=${encodeURIComponent(name)}`);
     }
-    setUsername(null);
-    setIsGuest(true);
-    navigate("/login");
   };
 
   if (loading) {
@@ -66,36 +90,64 @@ export default function Home() {
     );
   }
 
+  const colorForIndex = (idx) => {
+    const hue = (idx * 137.508) % 360;
+    return `hsl(${hue.toFixed(1)}, 70%, 60%)`;
+  };
+
+  const sizeForIndex = (idx, name) => {
+    if (name && name.length <= 6) return 'large';
+    return (idx % 4 === 0) ? 'large' : 'small';
+  };
+
+  const categories = categoriesState.length > 0 ? categoriesState.map((cat, idx) => ({
+    id: cat.id,
+    category_name: cat.category_name || cat.name || `Categoría ${cat.id}`,
+    color: cat.color || colorForIndex(idx),
+    size: cat.size || sizeForIndex(idx, cat.category_name || cat.name)
+  })) : [];
+
   return (
-    <div className="home-container home-container-centered">
-      <h2 className="home-title">¡Bienvenido a Cookit!</h2>
+    <div className="home-container">
+      <header className="home-header">
+        <h1 className="home-title">Explora recetas por categoría</h1>
+        <p className="home-subtitle">Elige una categoría para ver todas las recetas relacionadas</p>
+      </header>
 
-      {username ? (
-        <p className="user-greeting">Hola, <b>{username}</b></p>
-      ) : (
-        <p className="home-desc">Explora recetas, ingredientes y mucho más.</p>
-      )}
-
-      {isGuest ? (
-        <>
-          <p className="guest-message">Estás navegando como <b>invitado</b>. Algunas funciones estarán limitadas.</p>
-          <Button
-            onClick={handleLoginRedirect}
-            variant="primary"
-            size="large"
-          >
-            Iniciar sesión
-          </Button>
-        </>
-      ) : (
-        <Button
-          onClick={handleLogout}
-          variant="danger"
-          size="large"
-        >
-          Cerrar sesión
-        </Button>
-      )}
+      <main className="categories-wrapper">
+        <div className="categories-grid">
+          {catsLoading && <p>Cargando categorías...</p>}
+          {catsError && <p style={{ color: 'red' }}>Error: {catsError}</p>}
+          {!catsLoading && !catsError && categories.length === 0 && (
+            <p>No hay categorías disponibles</p>
+          )}
+          {!catsLoading && categories.map((cat) => (
+            <div
+              key={cat.id}
+              className={`category-tile ${cat.size === "large" ? "tile--large" : "tile--small"}`}
+              style={{ background: cat.color }}
+              role="button"
+              tabIndex={0}
+              onClick={() => handleCategoryClick(cat)}
+              onKeyDown={(e) => { if (e.key === 'Enter') handleCategoryClick(cat); }}
+              aria-label={`Ver recetas de ${cat.category_name}`}
+            >
+              {imagesMap[String(cat.id)] && (
+                <img
+                  src={imagesMap[String(cat.id)]}
+                  alt={cat.category_name}
+                  className="category-image"
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                  draggable={false}
+                />
+              )}
+              <div className="category-overlay">
+                <span className="category-name">{cat.category_name}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
     </div>
   );
 }
