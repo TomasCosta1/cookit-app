@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./UserSearchPage.css";
 
@@ -8,7 +8,33 @@ export default function UserSearchPage() {
   const [query, setQuery] = useState("");
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
+  const [isGuest, setIsGuest] = useState(false);
   const navigate = useNavigate();
+
+  // --- Protección de ruta (igual que en Profile.jsx) ---
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/profile`, {
+          credentials: "include",
+        });
+
+        if (!res.ok) {
+          setIsGuest(true);
+          return;
+        }
+
+        const data = await res.json();
+        setUser(data.user);
+      } catch (err) {
+        console.error("Error verificando sesión:", err);
+        setIsGuest(true);
+      }
+    };
+
+    checkAuth();
+  }, []);
 
   const handleSearch = async (e) => {
     const value = e.target.value;
@@ -21,12 +47,17 @@ export default function UserSearchPage() {
 
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE}/api/users/search?q=${value}`, { credentials: "include" });
+      const res = await fetch(
+        `${API_BASE}/api/users/search?q=${value}`,
+        { credentials: "include" }
+      );
+
       if (!res.ok) {
         console.error("Error en la respuesta:", res.status);
         setUsers([]);
         return;
       }
+
       const data = await res.json();
       setUsers(data);
     } catch (err) {
@@ -39,6 +70,21 @@ export default function UserSearchPage() {
   const handleNavigateToProfile = (id) => {
     navigate(`/profile/${id}`);
   };
+
+  // --- Mismo comportamiento que Profile.jsx ---
+  if (!user && !isGuest) return <p className="loading">Cargando...</p>;
+
+  if (isGuest) {
+    return (
+      <div className="user-search-page guest-block">
+        <h2>No has iniciado sesión</h2>
+        <p>Para buscar usuarios necesitas iniciar sesión.</p>
+        <button onClick={() => navigate("/login")} className="login-btn">
+          Ir al login
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="user-search-page">
@@ -67,7 +113,9 @@ export default function UserSearchPage() {
               onClick={() => handleNavigateToProfile(user.id)}
             >
               <img
-                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.username)}&size=80&background=fcba03&color=1a1a1a&bold=true`}
+                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
+                  user.username
+                )}&size=80&background=fcba03&color=1a1a1a&bold=true`}
                 alt={user.username}
                 className="user-avatar"
               />
