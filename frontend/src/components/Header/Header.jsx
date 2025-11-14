@@ -17,7 +17,7 @@ export const Header = () => {
     <nav className='nav'>
         <NavLink to="/user-search" className={({ isActive }) => isActive ? 'active' : ''}><GroupIcon /></NavLink>
         <NavLink to="/ingredients" className={({ isActive }) => isActive ? 'active' : ''}><CarrotIcon /></NavLink>
-        <NavLink to="/recipes" className={({ isActive }) => 'recipesIcon' + (isActive ? ' active' : '')}><DinnerDiningIcon /></NavLink>
+        <NavLink to="/" className={({ isActive }) => 'recipesIcon' + (isActive ? ' active' : '')}><DinnerDiningIcon /></NavLink>
         <NavLink to="/favorites" className={({ isActive }) => isActive ? 'active' : ''}><StarIcon /></NavLink>
         <NavLink to="/profile" className={({ isActive }) => isActive ? 'active' : ''}><PersonIcon /></NavLink>
       </nav>
