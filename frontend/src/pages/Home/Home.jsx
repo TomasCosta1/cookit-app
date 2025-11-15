@@ -74,11 +74,17 @@ export default function Home() {
   }, []);
 
   const handleCategoryClick = (category) => {
+    const categoryName = category.category_name || category.name;
+    
+    if (categoryName && categoryName.toLowerCase() === "ver todas") {
+      navigate("/recipes");
+      return;
+    }
+    
     if (category && category.id) {
       navigate(`/recipes?categoryId=${encodeURIComponent(category.id)}`);
-    } else if (category && (category.category_name || category.name)) {
-      const name = category.category_name || category.name;
-      navigate(`/recipes?category=${encodeURIComponent(name)}`);
+    } else if (categoryName) {
+      navigate(`/recipes?category=${encodeURIComponent(categoryName)}`);
     }
   };
 
@@ -95,16 +101,15 @@ export default function Home() {
     return `hsl(${hue.toFixed(1)}, 70%, 60%)`;
   };
 
-  const sizeForIndex = (idx, name) => {
-    if (name && name.length <= 6) return 'large';
-    return (idx % 4 === 0) ? 'large' : 'small';
+  const sizeForIndex = (idx, totalLength) => {
+    return (idx === 0 || idx === totalLength - 1) ? 'large' : 'small';
   };
 
   const categories = categoriesState.length > 0 ? categoriesState.map((cat, idx) => ({
     id: cat.id,
     category_name: cat.category_name || cat.name || `Categoría ${cat.id}`,
     color: cat.color || colorForIndex(idx),
-    size: cat.size || sizeForIndex(idx, cat.category_name || cat.name)
+    size: cat.size || sizeForIndex(idx, categoriesState.length)
   })) : [];
 
   return (
