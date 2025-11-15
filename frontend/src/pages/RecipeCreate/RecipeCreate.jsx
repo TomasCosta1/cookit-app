@@ -18,6 +18,7 @@ export default function RecipeCreate() {
     const [cookTime, setCookTime] = useState("");
     const [difficulty, setDifficulty] = useState("easy");
     const [categoryId, setCategoryId] = useState("");
+    const [videoUrl, setVideoUrl] = useState("");
 
     const [query, setQuery] = useState("");
     const [ingredientsResults, setIngredientsResults] = useState([]);
@@ -104,7 +105,8 @@ export default function RecipeCreate() {
                 cook_time: cookTime ? Number(cookTime) : null,
                 difficulty: difficulty || 'easy',
                 category_id: categoryId ? parseInt(categoryId) : null,
-                ingredient_ids: selectedIngredients.map(i => i.id)
+                ingredient_ids: selectedIngredients.map(i => i.id),
+                url_video: videoUrl.trim() || null
             };
 
             const res = await fetch(`${API_BASE}/recipes`, {
@@ -190,6 +192,10 @@ export default function RecipeCreate() {
                                 </option>
                             ))}
                         </select>
+                    </label>
+                    <label>
+                        Video
+                        <input type="text" placeholder="URL del video" onChange={(e) => setVideoUrl(e.target.value)} />
                     </label>
                 </div>
 
