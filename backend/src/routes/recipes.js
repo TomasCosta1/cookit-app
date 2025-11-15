@@ -16,7 +16,6 @@ router.get('/', async (req, res) => {
 
         const params = [];
 
-        // Priorizar `categoryId` cuando se provee; si no, permitir `category` por nombre
         if (categoryId !== undefined && categoryId !== '') {
             if (isNaN(categoryId)) {
                 return res.status(400).json({
@@ -43,6 +42,51 @@ router.get('/', async (req, res) => {
             message: 'Error interno del servidor',
             error: error.message
         });
+    }
+});
+
+// Servir imagen BLOB de la receta (si existe)
+router.get('/:id/image', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (isNaN(id)) {
+            return res.status(400).json({
+                success: false,
+                message: 'El ID debe ser un número válido'
+            });
+        }
+
+        const [rows] = await promisePool.execute(
+            'SELECT img FROM recipes WHERE id = ?',
+            [id]
+        );
+
+        if (!rows || rows.length === 0 || !rows[0].img) {
+            return res.status(404).end();
+        }
+
+        const imgBuffer = rows[0].img;
+
+        let mime = 'application/octet-stream';
+        if (imgBuffer && imgBuffer.length >= 4) {
+            const b0 = imgBuffer[0];
+            const b1 = imgBuffer[1];
+            const b2 = imgBuffer[2];
+            const b3 = imgBuffer[3];
+
+            if (b0 === 0xFF && b1 === 0xD8) mime = 'image/jpeg';
+            else if (b0 === 0x89 && b1 === 0x50 && b2 === 0x4E && b3 === 0x47) mime = 'image/png';
+            else if (b0 === 0x47 && b1 === 0x49 && b2 === 0x46 && b3 === 0x38) mime = 'image/gif';
+            else if (imgBuffer.length >= 12 && imgBuffer.toString('ascii', 0, 4) === 'RIFF' && imgBuffer.toString('ascii', 8, 12) === 'WEBP') mime = 'image/webp';
+        }
+
+        res.setHeader('Content-Type', mime);
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+        return res.end(imgBuffer);
+    } catch (error) {
+        console.error('Error al servir imagen de receta:', error);
+        return res.status(500).json({ success: false, message: 'Error interno del servidor' });
     }
 });
 

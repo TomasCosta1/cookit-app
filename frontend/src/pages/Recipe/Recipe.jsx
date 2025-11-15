@@ -9,6 +9,7 @@ import { useRating } from "../../hooks/useRating";
 import { Rating } from "../../components/Rating/Rating";
 import Modal from "../../components/Modal/Modal";
 import RatingInput from "../../components/RatingInput/RatingInput";
+import ImageRemoteOrFallback from "../../components/ImageRemoteOrFallback/ImageRemoteOrFallback";
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
@@ -196,47 +197,30 @@ export default function Recipe() {
       </div>
 
       <div className="recipe-detail">
-        <div className="recipe-detail-header">
-          <div className="recipe-detail-title-container">
-            <h1 className="recipe-detail-title">{recipe.title}</h1>
-            {isAuthenticated && (
-              <FavoriteButton
-                recipeId={recipe.id}
-                isFavorite={isFavorite(recipe.id)}
-                onToggle={toggleFavorite}
-                size="large"
-              />
-            )}
-          </div>
-          <div className="recipe-detail-badges">
-            <span
-              className="recipe-detail-difficulty"
-              style={{
-                backgroundColor: getDifficultyColor(recipe.difficulty),
-                color: "white",
-                padding: "6px 12px",
-                borderRadius: "6px",
-                fontSize: "14px",
-                fontWeight: "bold",
-              }}
-            >
-              {getDifficultyText(recipe.difficulty)}
-            </span>
-            {recipe.category_name && (
-              <span
-                className="recipe-detail-category-badge"
-                style={{
-                  backgroundColor: "#6c757d",
-                  color: "white",
-                  padding: "6px 12px",
-                  borderRadius: "6px",
-                  fontSize: "14px",
-                  fontWeight: "bold",
-                }}
-              >
-                {recipe.category_name}
-              </span>
-            )}
+        <div className="recipe-hero">
+          <ImageRemoteOrFallback apiUrl={`${API_BASE}/recipes/${id}/image`} alt={recipe.title} className="recipe-detail-image" />
+          <div className="recipe-hero-overlay">
+            <div className="recipe-hero-left">
+              <h1 className="recipe-detail-title recipe-hero-title">{recipe.title}</h1>
+              <div className="recipe-detail-badges recipe-hero-badges">
+                <span className={`badge difficulty-${recipe.difficulty}`}>
+                  {getDifficultyText(recipe.difficulty)}
+                </span>
+                {recipe.category_name && (
+                  <span className="badge badge-category">{recipe.category_name}</span>
+                )}
+              </div>
+            </div>
+            <div className="recipe-hero-right">
+              {isAuthenticated && (
+                <FavoriteButton
+                  recipeId={recipe.id}
+                  isFavorite={isFavorite(recipe.id)}
+                  onToggle={toggleFavorite}
+                  size="large"
+                />
+              )}
+            </div>
           </div>
         </div>
 
@@ -340,6 +324,6 @@ export default function Recipe() {
           </div>
         )}
       </div>
-    </div>
+      </div>
   );
 }
