@@ -117,7 +117,7 @@ router.get('/:id/ingredients', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const { user_id, title, description, steps, cook_time, difficulty, category_id, ingredient_ids } = req.body;
+        const { user_id, title, description, steps, cook_time, difficulty, category_id, ingredient_ids, url_video } = req.body;
         
         // Validaciones obligatorias
         if (!user_id) {
@@ -137,6 +137,9 @@ router.post('/', async (req, res) => {
         }
         if (!category_id || category_id === '' || category_id === null || category_id === undefined) {
             return res.status(400).json({ success: false, message: 'category_id es obligatorio' });
+        }
+        if (!url_video || String(url_video).trim() === '') {
+            return res.status(400).json({ success: false, message: 'url_video es obligatorio' });
         }
         
         const validDifficulties = ['easy', 'medium', 'hard'];
@@ -177,8 +180,8 @@ router.post('/', async (req, res) => {
             await conn.beginTransaction();
 
             const insertSql = `
-                INSERT INTO recipes (user_id, title, description, steps, cook_time, difficulty, category_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO recipes (user_id, title, description, steps, cook_time, difficulty, category_id, url_video)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             `;
             const [result] = await conn.execute(insertSql, [
                 user_id,
@@ -187,7 +190,8 @@ router.post('/', async (req, res) => {
                 String(steps).trim(),
                 cook_time || null,
                 difficulty || 'easy',
-                parseInt(category_id)
+                parseInt(category_id),
+                String(url_video).trim()
             ]);
 
             const recipeId = result.insertId;
