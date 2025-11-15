@@ -36,6 +36,82 @@
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
 
+.recipe-detail-image-wrapper{
+    width: 100%;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.recipe-detail-image{
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 420px;
+    object-fit: cover;
+}
+
+.recipe-hero{
+    position: relative;
+    left: -32px;
+    width: calc(100% + 64px);
+    height: 320px;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    margin-top: -32px;
+}
+
+.recipe-hero .recipe-detail-image{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.recipe-hero-overlay{
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 20px;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 28%, rgba(0,0,0,0.6));
+    z-index: 2;
+    color: white;
+}
+
+.recipe-hero-left{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 75%;
+}
+
+.recipe-hero-right{
+    display: flex;
+    align-items: center;
+}
+
+.recipe-hero-title{
+    margin: 0;
+    color: #fff;
+    font-size: 28px;
+    line-height: 1.1;
+    text-shadow: 0 8px 26px rgba(0,0,0,0.7);
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+.recipe-hero-badges{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
 .recipe-detail-header {
     display: flex;
     justify-content: space-between;
@@ -54,7 +130,7 @@
 
 .recipe-detail-title {
     margin: 0;
-    color: #333;
+    color: #ffffff;
     font-size: 32px;
     font-weight: 700;
     line-height: 1.2;
@@ -66,6 +142,32 @@
     align-items: center;
     flex-shrink: 0;
     gap: 12px;
+}
+
+.badge {
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.badge-category {
+    background-color: rgba(0,0,0,0.45);
+}
+
+.badge.difficulty-easy {
+    background-color: #28a745;
+}
+
+.badge.difficulty-medium {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.badge.difficulty-hard {
+    background-color: #dc3545;
 }
 
 .recipe-detail-difficulty {
@@ -250,6 +352,17 @@
     
     .recipe-detail-title {
         font-size: 24px;
+    }
+
+    .recipe-hero{
+        height: 220px;
+        left: -20px;
+        width: calc(100% + 40px);
+        margin-top: -20px;
+    }
+
+    .recipe-hero-title{
+        font-size: 20px;
     }
     
     .recipe-detail-meta {
