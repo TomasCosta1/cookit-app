@@ -56,6 +56,8 @@ app.use('/ingredients', require('./src/routes/ingredients'));
 app.use('/recipes', require('./src/routes/recipes'));
 app.use('/favorites', require('./src/routes/favorites'));
 app.use('/filter', require('./src/routes/recipeFilter'));
+app.use('/ratings', require('./src/routes/ratings'));
+app.use('/categories', require('./src/routes/categories'));
 
 testConnection();
 

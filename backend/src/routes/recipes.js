@@ -4,10 +4,36 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
-        const query = `SELECT * FROM recipes r ORDER BY r.created_at DESC`;
+        const { categoryId, category } = req.query;
 
-        const [recipes] = await promisePool.execute(query);
-        
+        let query = `
+            SELECT 
+                r.*,
+                c.category_name
+            FROM recipes r
+            LEFT JOIN categories c ON r.category_id = c.id
+        `;
+
+        const params = [];
+
+        if (categoryId !== undefined && categoryId !== '') {
+            if (isNaN(categoryId)) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'categoryId debe ser un número válido'
+                });
+            }
+            query += ' WHERE r.category_id = ?';
+            params.push(parseInt(categoryId, 10));
+        } else if (category !== undefined && category !== '') {
+            query += ' WHERE c.category_name = ?';
+            params.push(String(category));
+        }
+
+        query += ' ORDER BY r.created_at DESC';
+
+        const [recipes] = await promisePool.execute(query, params);
+
         res.status(200).json(recipes);
     } catch (error) {
         console.error('Error al obtener recetas:', error);
@@ -16,6 +42,51 @@ router.get('/', async (req, res) => {
             message: 'Error interno del servidor',
             error: error.message
         });
+    }
+});
+
+// Servir imagen BLOB de la receta (si existe)
+router.get('/:id/image', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (isNaN(id)) {
+            return res.status(400).json({
+                success: false,
+                message: 'El ID debe ser un número válido'
+            });
+        }
+
+        const [rows] = await promisePool.execute(
+            'SELECT img FROM recipes WHERE id = ?',
+            [id]
+        );
+
+        if (!rows || rows.length === 0 || !rows[0].img) {
+            return res.status(404).end();
+        }
+
+        const imgBuffer = rows[0].img;
+
+        let mime = 'application/octet-stream';
+        if (imgBuffer && imgBuffer.length >= 4) {
+            const b0 = imgBuffer[0];
+            const b1 = imgBuffer[1];
+            const b2 = imgBuffer[2];
+            const b3 = imgBuffer[3];
+
+            if (b0 === 0xFF && b1 === 0xD8) mime = 'image/jpeg';
+            else if (b0 === 0x89 && b1 === 0x50 && b2 === 0x4E && b3 === 0x47) mime = 'image/png';
+            else if (b0 === 0x47 && b1 === 0x49 && b2 === 0x46 && b3 === 0x38) mime = 'image/gif';
+            else if (imgBuffer.length >= 12 && imgBuffer.toString('ascii', 0, 4) === 'RIFF' && imgBuffer.toString('ascii', 8, 12) === 'WEBP') mime = 'image/webp';
+        }
+
+        res.setHeader('Content-Type', mime);
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+        return res.end(imgBuffer);
+    } catch (error) {
+        console.error('Error al servir imagen de receta:', error);
+        return res.status(500).json({ success: false, message: 'Error interno del servidor' });
     }
 });
 
@@ -30,7 +101,14 @@ router.get('/:id', async (req, res) => {
             });
         }
         
-        const query = `SELECT * FROM recipes r WHERE r.id = ?`;
+        const query = `
+            SELECT 
+                r.*,
+                c.category_name
+            FROM recipes r
+            LEFT JOIN categories c ON r.category_id = c.id
+            WHERE r.id = ?
+        `;
         
         const [recipes] = await promisePool.execute(query, [id]);
         
@@ -103,7 +181,7 @@ router.get('/:id/ingredients', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const { user_id, title, description, steps, cook_time, difficulty, ingredient_ids } = req.body;
+        const { user_id, title, description, steps, cook_time, difficulty, category_id, ingredient_ids, url_video } = req.body;
         
         // Validaciones obligatorias
         if (!user_id) {
@@ -121,6 +199,12 @@ router.post('/', async (req, res) => {
         if (!Array.isArray(ingredient_ids) || ingredient_ids.length === 0) {
             return res.status(400).json({ success: false, message: 'ingredients es obligatorio (ingredient_ids debe contener al menos 1 id)' });
         }
+        if (!category_id || category_id === '' || category_id === null || category_id === undefined) {
+            return res.status(400).json({ success: false, message: 'category_id es obligatorio' });
+        }
+        if (!url_video || String(url_video).trim() === '') {
+            return res.status(400).json({ success: false, message: 'url_video es obligatorio' });
+        }
         
         const validDifficulties = ['easy', 'medium', 'hard'];
         if (difficulty && !validDifficulties.includes(difficulty)) {
@@ -136,6 +220,23 @@ router.post('/', async (req, res) => {
                 message: 'cook_time debe ser un número positivo'
             });
         }
+
+        if (isNaN(category_id) || category_id <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'category_id debe ser un número válido'
+            });
+        }
+        const [categoryCheck] = await promisePool.execute(
+            'SELECT id FROM categories WHERE id = ?',
+            [parseInt(category_id)]
+        );
+        if (categoryCheck.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'La categoría especificada no existe'
+            });
+        }
         
         // Transacción: crear receta y asociar ingredientes
         const conn = await promisePool.getConnection();
@@ -143,8 +244,8 @@ router.post('/', async (req, res) => {
             await conn.beginTransaction();
 
             const insertSql = `
-                INSERT INTO recipes (user_id, title, description, steps, cook_time, difficulty)
-                VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO recipes (user_id, title, description, steps, cook_time, difficulty, category_id, url_video)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             `;
             const [result] = await conn.execute(insertSql, [
                 user_id,
@@ -152,7 +253,9 @@ router.post('/', async (req, res) => {
                 String(description).trim(),
                 String(steps).trim(),
                 cook_time || null,
-                difficulty || 'easy'
+                difficulty || 'easy',
+                parseInt(category_id),
+                String(url_video).trim()
             ]);
 
             const recipeId = result.insertId;

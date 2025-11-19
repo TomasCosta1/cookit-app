@@ -4,13 +4,16 @@ import Button from "../Button/Button";
 import FavoriteButton from "../FavoriteButton/FavoriteButton";
 import { useAuth } from "../../hooks/useAuth";
 import { useFavorites } from "../../hooks/useFavorites";
+import { useRating } from "../../hooks/useRating";
+import { Rating } from "../Rating/Rating";
 
 const RecipeCard = ({ recipe }) => {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
   const { isFavorite, toggleFavorite } = useFavorites(user?.id);
+  const {rating} = useRating(recipe.id)
 
-  const hasFilterInfo = recipe.matching_ingredients !== undefined;
+  const hasFilterInfo = recipe._filteredByIngredients && recipe.matching_ingredients !== undefined && recipe.matching_ingredients > 0;
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
@@ -64,6 +67,7 @@ const RecipeCard = ({ recipe }) => {
       </>
     );
   };
+  
   return (
     <div className="recipe-card">
       <div className="recipe-header">
@@ -78,19 +82,36 @@ const RecipeCard = ({ recipe }) => {
             />
           )}
         </div>
-        <span
-          className="recipe-difficulty"
-          style={{
-            backgroundColor: getDifficultyColor(recipe.difficulty),
-            color: "white",
-            padding: "4px 8px",
-            borderRadius: "4px",
-            fontSize: "12px",
-            fontWeight: "bold",
-          }}
-        >
-          {getDifficultyText(recipe.difficulty)}
-        </span>
+        <div className="recipe-badges">
+          <span
+            className="recipe-difficulty"
+            style={{
+              backgroundColor: getDifficultyColor(recipe.difficulty),
+              color: "white",
+              padding: "4px 8px",
+              borderRadius: "4px",
+              fontSize: "12px",
+              fontWeight: "bold",
+            }}
+          >
+            {getDifficultyText(recipe.difficulty)}
+          </span>
+          {recipe.category_name && (
+            <span
+              className="recipe-category-badge"
+              style={{
+                backgroundColor: "#6c757d",
+                color: "white",
+                padding: "4px 8px",
+                borderRadius: "4px",
+                fontSize: "12px",
+                fontWeight: "bold",
+              }}
+            >
+              {recipe.category_name}
+            </span>
+          )}
+        </div>
       </div>
 
       {recipe.description && (
@@ -104,6 +125,13 @@ const RecipeCard = ({ recipe }) => {
         <span className="recipe-date">
           📅 {new Date(recipe.created_at).toLocaleDateString("es-ES")}
         </span>
+        {rating !== 0 ? (
+          <span className="recipe-rating">
+            {<Rating rating={rating}/>}
+          </span>
+        ) : (
+          <span className="recipe-rating">Sin calificar</span>
+        )}
         {hasFilterInfo && (
           <>
             <span className="match-count">Ingredientes:</span>

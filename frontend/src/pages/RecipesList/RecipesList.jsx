@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import "./RecipesList.css";
 import RecipeCard from "../../components/RecipeCard/RecipeCard";
 import SearchInput from "../../components/SearchInput/SearchInput";
@@ -19,13 +20,25 @@ export default function RecipesList() {
     const [filteredRecipes, setFilteredRecipes] = useState([]);
     const [isFiltered, setIsFiltered] = useState(false);
 
+    const location = useLocation();
+
     const url = useMemo(() => {
         const params = new URLSearchParams();
         if (q) params.set("q", q);
+
+        const incoming = new URLSearchParams(location.search);
+        const incomingCategoryId = incoming.get("categoryId");
+        const incomingCategory = incoming.get("category");
+        if (incomingCategoryId) {
+            params.set("categoryId", incomingCategoryId);
+        } else if (incomingCategory) {
+            params.set("category", incomingCategory);
+        }
+
         params.set("page", String(page));
         params.set("limit", String(limit));
         return `${API_BASE}/recipes?${params.toString()}`;
-    }, [q, page, limit]);
+    }, [q, page, limit, location.search]);
 
     useEffect(() => {
         let cancelled = false;

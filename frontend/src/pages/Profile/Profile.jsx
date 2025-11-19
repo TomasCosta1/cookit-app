@@ -130,12 +130,6 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* Buscador de usuarios */}
-      <div className="search-section">
-        <h3>Buscar usuarios</h3>
-        <UserSearch />
-      </div>
-
       {/* Mis recetas */}
       <div className="my-recipes-section">
         <h3>Mis recetas ({myRecipes.length})</h3>

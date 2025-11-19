@@ -35,7 +35,18 @@
     flex: 1;
 }
 
+.recipe-badges {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 8px;
+}
+
 .recipe-difficulty {
+    flex-shrink: 0;
+}
+
+.recipe-category-badge {
     flex-shrink: 0;
 }
 
@@ -115,20 +126,15 @@
 }
 
 @media (max-width: 768px) {
-    .ingredient-match {
-        gap: 4px;
-    }
-    
-    .match-count{
-        font-size: 14px;
-    }
-}
-
-@media (max-width: 768px) {
     .recipe-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 8px;
+    }
+    
+    .recipe-badges {
+        width: 100%;
+        flex-wrap: wrap;
     }
     
     .recipe-meta {
@@ -143,5 +149,13 @@
     .recipe-actions .btn {
         flex: 1;
         min-width: 0;
+    }
+
+    .ingredient-match {
+        gap: 4px;
+    }
+    
+    .match-count{
+        font-size: 14px;
     }
 }
